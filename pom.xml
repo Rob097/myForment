@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.5.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.myforment</groupId>
+	<artifactId>project-myforment</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>myForment</name>
+	<description>Project for Multimodule Authentication Spring Boot</description>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven-compiler-plugin.source>8</maven-compiler-plugin.source>
+		<maven-compiler-plugin.target>8</maven-compiler-plugin.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mongodb-driver-sync.version>3.10.1</mongodb-driver-sync.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Maven MILESTONE Repository</name>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
+		<!-- API, java.xml.bind module -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+		</dependency>
+
+		<!-- Runtime, com.sun.xml.bind module -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- MONGODB -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-mongodb -->
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<!--<version>3.0.1.RELEASE</version>-->
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+			<!--<version>4.0.5</version>-->
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<!--<version>4.0.5</version>-->
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-legacy</artifactId>
+			<!--<version>4.0.5</version>-->
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.10.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.10.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+			<!--<version>2.4.0</version>-->
+		</dependency>
+
+
+
+		<!--<dependency> <groupId>org.springframework.data</groupId> <artifactId>spring-data-mongodb</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-mongodb</artifactId> 
+			</dependency> <dependency> <groupId>org.mongodb</groupId> <artifactId>mongodb-driver-sync</artifactId> 
+			</dependency> <dependency> <groupId>org.mongodb</groupId> <artifactId>bson</artifactId> 
+			</dependency> <dependency> <groupId>org.mongodb</groupId> <artifactId>mongodb-driver-core</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-mongodb</artifactId> 
+			<exclusions> <exclusion> <groupId>org.springframework.data</groupId> <artifactId>spring-data-commons</artifactId> 
+			</exclusion> <exclusion> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId> 
+			</exclusion> <exclusion> <groupId>org.mongodb</groupId> <artifactId>mongodb-driver</artifactId> 
+			</exclusion> </exclusions> </dependency> <dependency> <groupId>org.mongodb</groupId> 
+			<artifactId>mongodb-driver</artifactId> <version>3.12.7</version> <exclusions> 
+			<exclusion> <groupId>org.mongodb</groupId> <artifactId>bson</artifactId> 
+			</exclusion> </exclusions> </dependency> -->
+
+	</dependencies>
+
+	<modules>
+		<module>runnable</module>
+		<module>clients</module>
+		<module>users</module>
+	</modules>
+</project>

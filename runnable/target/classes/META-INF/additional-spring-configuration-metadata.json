@@ -1,0 +1,57 @@
+{"properties": [
+  {
+    "name": "jwtConstant",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtConstant'"
+  },
+  {
+    "name": "jwtConstant",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtConstant'"
+  },
+  {
+    "name": "jwtHeader",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtHeader'"
+  },
+  {
+    "name": "jwtExpirationMsRememberMe",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtExpirationMsRememberMe'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "connection.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.uri'"
+  },
+  {
+    "name": "connection.password",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.password'"
+  },
+  {
+    "name": "connection.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.database'"
+  },
+  {
+    "name": "connection.username",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.username'"
+  },
+  {
+    "name": "connection.host",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.host'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  }
+]}
