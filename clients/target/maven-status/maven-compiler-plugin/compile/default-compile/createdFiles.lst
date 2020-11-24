@@ -1,7 +1,7 @@
-com\multitenant\jwt\clients\models\Clienti.class
-com\multitenant\jwt\clients\controllers\ClientiController.class
-com\multitenant\jwt\clients\models\Cards.class
-com\multitenant\jwt\clients\models\MessageResponse.class
-com\multitenant\jwt\clients\repository\ClientiRepository.class
-com\multitenant\jwt\clients\services\ClientiServiceImpl.class
-com\multitenant\jwt\clients\services\ClientiService.class
+com\myforment\clients\models\Cards.class
+com\myforment\clients\models\Clienti.class
+com\myforment\clients\repository\ClientiRepository.class
+com\myforment\clients\models\MessageResponse.class
+com\myforment\clients\services\ClientiService.class
+com\myforment\clients\controllers\ClientiController.class
+com\myforment\clients\services\ClientiServiceImpl.class

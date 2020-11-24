@@ -53,5 +53,40 @@
     "name": "jwtSecret",
     "type": "java.lang.String",
     "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "connection.attributes",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.attributes'"
+  },
+  {
+    "name": "connection.general.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.general.database'"
+  },
+  {
+    "name": "connection.general.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.general.uri'"
+  },
+  {
+    "name": "connection.users.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.users.database'"
+  },
+  {
+    "name": "connection.users.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.users.uri'"
+  },
+  {
+    "name": "connection.port",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.port'"
+  },
+  {
+    "name": "connection.port",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.port'"
   }
 ]}

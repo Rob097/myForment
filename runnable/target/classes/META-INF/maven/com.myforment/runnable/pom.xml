@@ -16,12 +16,12 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.multitenant.jwt</groupId>
+			<groupId>com.myforment</groupId>
 			<artifactId>users</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.multitenant.jwt</groupId>
+			<groupId>com.myforment</groupId>
 			<artifactId>clients</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -38,7 +38,7 @@
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
-							<mainClass>com.multitenant.jwt.runnable.main.Application</mainClass>
+							<mainClass>com.myforment.runnable.main.Application</mainClass>
 							<classifier>exe</classifier>
 						</configuration>
 					</execution>
@@ -116,7 +116,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.multitenant.jwt.runnable.main.Application</mainClass>
+							<mainClass>com.myforment.runnable.main.Application</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>

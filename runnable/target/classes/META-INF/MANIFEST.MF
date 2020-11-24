@@ -43,6 +43,6 @@ Class-Path: dependency-jars/spring-boot-starter-web-2.3.5.RELEASE.jar de
  ar dependency-jars/spring-boot-starter-data-mongodb-2.3.5.RELEASE.jar
 Implementation-Title: runnable
 Implementation-Version: 0.0.1-SNAPSHOT
-Main-Class: com.multitenant.jwt.runnable.main.Application
+Main-Class: com.myforment.runnable.main.Application
 Created-By: Maven Integration for Eclipse
 
