@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClientFactory;
 import com.mongodb.client.MongoClients;
 import com.myforment.users.security.configuration.Properties;
+
 
 /**
  * Configuration class to expose @{link MultitenantMongoDbFactory} as a Spring bean.
@@ -28,50 +27,38 @@ public class MultitenantMongoDbConfiguration {
 	
 	@Autowired
 	public HttpServletRequest request;
+	
+	@Autowired
+	private Properties properties;
     
-    private com.mongodb.client.MongoClient mongoClient;
-    
-    @Autowired(required = false)
-    private MongoClientFactory mongoClientFactory;
-    
-    
+    private static com.mongodb.client.MongoClient mongoClient;
     
 
-	@Bean
-    public MongoClientFactory mongoClientFactory() {
-		
-		return mongoClientFactory;    	
-		
-    }
-    
     @Bean
     public MongoClient createMongoClient() throws UnknownHostException {
-    	
+
     	if(mongoClient == null) {
-    		mongoClient = MongoClients.create(Properties.connectionUri);
+    		mongoClient = MongoClients.create(properties.getConnectionUri());
     	}
+    	
     	return mongoClient;
     	
     }
-
-    @Bean
-    public MongoDatabaseFactory mongoDbFactory(String dbName) throws UnknownHostException {
-    	
-    	return new MultitenantMongoDbFactory(createMongoClient(), dbName);
-    	
-    }
-    
-    
    
     
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongoDbFactory(Properties.databaseGeneral));
+    	return new MongoTemplate(new MultitenantMongoDbFactory(createMongoClient(), properties.getDatabaseGeneral(), this.properties));
     }
     
     @Bean
-    public MongoTemplate utentiTemplate() throws Exception {
-        return new MongoTemplate(mongoDbFactory(Properties.databaseUsers));
+    public MongoTemplateCustom utentiTemplate() throws Exception {
+    	return new MongoTemplateCustom(new MultitenantMongoDbFactory(createMongoClient(), properties.getDatabaseUsers(), this.properties));
+    }
+    
+    @Bean
+    public MongoTemplateCustom companyTemplate() throws Exception {
+    	return new MongoTemplateCustom(new MultitenantMongoDbFactory(createMongoClient(), properties.getDatabaseCompanies(), this.properties));
     }
 
 }

@@ -88,5 +88,15 @@
     "name": "connection.port",
     "type": "java.lang.String",
     "description": "A description for 'connection.port'"
+  },
+  {
+    "name": "connection.company.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.company.database'"
+  },
+  {
+    "name": "connection.company.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.company.uri'"
   }
 ]}

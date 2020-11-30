@@ -1,0 +1,11 @@
+com\myforment\companies\models\Team.class
+com\myforment\companies\services\CompanyService.class
+com\myforment\companies\models\Role.class
+com\myforment\companies\models\Company.class
+com\myforment\companies\services\CompanyServiceImpl.class
+com\myforment\companies\models\Permission.class
+com\myforment\companies\models\enums\ERole.class
+com\myforment\companies\models\Course.class
+com\myforment\companies\controllers\CompaniesController.class
+com\myforment\companies\models\Employee.class
+com\myforment\companies\models\enums\EPermission.class

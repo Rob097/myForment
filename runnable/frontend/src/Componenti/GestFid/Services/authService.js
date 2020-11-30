@@ -114,6 +114,10 @@ class AuthenticationService {
         return axios.get(`${this.state.Server}/api/auth/getAll`);
     }
 
+    getAllRoles = () =>{
+        return axios.get(`${this.state.Server}/api/auth/getAllRoles`);
+    }
+
 }
 
 export default new AuthenticationService();

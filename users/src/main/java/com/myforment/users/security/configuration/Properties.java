@@ -1,48 +1,68 @@
 package com.myforment.users.security.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import lombok.Data;
+
+@Data
+@Component
 public class Properties {
 
-	@Value("${jwtExpirationMs}")
-	public static int jwtExpirationMs;
+	private final int jwtExpirationMs;
 	
-	@Value("${jwtExpirationMsRememberMe}")
-	public static long jwtExpirationMsRememberMe;
+	private final long jwtExpirationMsRememberMe;
+
+	private final String jwtSecret;	
+
+	private final String tokenHeader;
 	
-	@Value("${jwtSecret}")
-	public static String jwtSecret;	
+	private final String tokenConstant;
 	
-	@Value("${jwtHeader}")
-	public static String tokenHeader;
+	private final String domainNameCookies;
 	
-	@Value("${jwtConstant}")
-	public static String tokenConstant;
+	private final String database;
 	
+	private final String databaseGeneral;
+	private final String databasePrefix;
 	
-	@Value("${connection.host}")
-	public static String domainNameCookies;
+	private final String databaseUsers;
 	
-	@Value("${connection.database}")
-	public static String database;
+	private final String databaseCompanies;
 	
-	@Value("${connection.general.database}")
-	public static String databaseGeneral;
-	public static String databasePrefix = databaseGeneral;
-	
-	@Value("${connection.users.database}")
-	public static String databaseUsers;
-	
-	@Value("${connection.uri}")
-	public static String connectionUri;
-	
-	
-	
-	
-	
-	
-	
-	
+	private final String connectionUri;
+    
+    
+    
+    @Autowired
+    public Properties(
+    		@Value("${jwtExpirationMs}") int jwtExpirationMs,
+    		@Value("${jwtExpirationMsRememberMe}") long jwtExpirationMsRememberMe,
+    		@Value("${jwtSecret}") String jwtSecret,
+    		@Value("${jwtHeader}") String tokenHeader,
+    		@Value("${jwtConstant}") String tokenConstant,
+    		@Value("${connection.host}") String domainNameCookies,
+    		@Value("${connection.database}") String database,
+    		@Value("${connection.general.database}") String databaseGeneral,
+    		@Value("${connection.users.database}") String databaseUsers,
+    		@Value("${connection.company.database}") String databaseCompanies,
+    		@Value("${connection.uri}") String connectionUri    		
+    		) {
+    	this.jwtExpirationMs = jwtExpirationMs;
+    	this.jwtExpirationMsRememberMe = jwtExpirationMsRememberMe;
+    	this.jwtSecret = jwtSecret;
+    	this.tokenHeader = tokenHeader;
+    	this.tokenConstant = tokenConstant;
+    	this.domainNameCookies = domainNameCookies;
+    	this.database = database;
+    	this.databasePrefix = databaseGeneral;
+    	this.databaseGeneral = databaseGeneral;
+    	this.databaseUsers = databaseUsers;
+    	this.databaseCompanies = databaseCompanies;
+    	this.connectionUri = connectionUri;
+    	
+    }
 	
 	
 	
@@ -54,11 +74,15 @@ public class Properties {
 	
 	public static String CLAIM_KEY_AUTHORITIES = "roles";
 	public static String USER_ID_ATTRIBUTE = "userId";
-	public static String USER_SIGNUP_ATTRIBUTE = "user_signup";
+	public static String ENTITY_ID_ATTRIBUTE = "entity_id";
 	
 	public static String TOKEN_COOKIE_NAME = "token";
 	public static String REMEMBER_COOKIE_NAME = "rememberMe";
 	
+	public static String OWNER_JOB = "Owner";
 	
-	
+	//ROLES
+	public static String ROLE_BASIC = "BASIC";
+	public static String ROLE_ADMIN = "ADMIN";
+	public static String ROLE_EDITOR = "EDITOR";
 }

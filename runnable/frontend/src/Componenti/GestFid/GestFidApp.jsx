@@ -6,6 +6,7 @@ import SignupComponent from './Signup/SignupComponent'
 import WelcomeComponent from "./Welcome/Welcome"
 import Clienti from "./Clienti/Clienti"
 import DatiClienteComponent from "./Clienti/InsClienti/DatiCliente"
+import CompanyDataComponent from "./Companies/InsCompany/CompanyData"
 import HeaderComponent from "./Header/HeaderComponent"
 import FooterComponent from "./Footer/FooterComponent"
 import AuthRoute from "./AuthRoute";
@@ -16,8 +17,9 @@ export default class GestFidApp extends Component {
 
     //State pe salvare i diversi tipi di ruoli
     state = {
-        User: "ROLE_USER",
-        Admin: 'ROLE_ADMIN'
+        Basic: "ROLE_BASIC",
+        Admin: 'ROLE_ADMIN',
+        Editor: 'ROLE_EDITOR'
     }
 
     render() {
@@ -33,9 +35,13 @@ export default class GestFidApp extends Component {
                         <Route path="/login" component={LoginComponent} />
                         <Route path="/logout" component={LogoutComponent} />
                         <Route path="/signup" component={SignupComponent} />
-                        <AuthRoute path="/welcome/:userId" component={WelcomeComponent} role={this.state.User} />
+                        <AuthRoute path="/welcome/:userId" component={WelcomeComponent} role={this.state.Basic} />
                         <AuthRoute path="/inscliente/:codfid" component={DatiClienteComponent} role={this.state.Admin} />
-                        <AuthRoute path="/clienti" component={Clienti} role={this.state.User} />
+                        <AuthRoute path="/clienti" component={Clienti} role={this.state.Basic} />
+
+                        {/* COMPANIES ROUTES */}
+                        <AuthRoute path="/inscompany/:id" component={CompanyDataComponent} role={this.state.Basic} />
+
                         <Route path="/forbidden" component={ForbComponent} />
 
                         <Route exact path="/404" component={NotFound} />

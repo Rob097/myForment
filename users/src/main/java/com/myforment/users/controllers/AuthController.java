@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,10 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.myforment.users.models.ERole;
 import com.myforment.users.models.Role;
 import com.myforment.users.models.User;
 import com.myforment.users.models.Utente;
+import com.myforment.users.models.enums.ERole;
+import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.users.multitenant.MultitenantMongoDbConfiguration;
 import com.myforment.users.payload.request.LoginRequest;
 import com.myforment.users.payload.request.SignupRequest;
@@ -49,19 +49,26 @@ import com.myforment.users.services.UserDetailsServiceImpl;
  * @author Roberto97 Class used to perform action on the paths that are relative
  *         to an authentication action.
  */
-@CrossOrigin(origins = "*"/*"${connection.host}"*/, maxAge = 3600, allowCredentials = "true")
+@CrossOrigin(origins = "*"/* "${connection.host}" */, maxAge = 3600, allowCredentials = "true")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+	
+	@Autowired(required=false)
+	HttpServletRequest request;
+	
+	@Autowired
+	private Properties properties;
+	
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	@Qualifier("utentiTemplate")
-	private MongoTemplate utentiTemplate;
+	private MongoTemplateCustom utentiTemplate;
 
 	@Autowired
 	private RoleRepository roleRepository;
@@ -71,24 +78,20 @@ public class AuthController {
 
 	@Autowired
 	private JwtUtils jwtUtils;
-	
+
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
-	
+
 	@Autowired
 	public MultitenantMongoDbConfiguration multitenantMongoDbConfiguration;
-	
-	private final String TOKEN_COOKIE_NAME = Properties.TOKEN_COOKIE_NAME;
-	private final String REMEMBER_COOKIE_NAME = Properties.REMEMBER_COOKIE_NAME;	
-	private  final String USER_SIGNUP_ATTRIBUTE = Properties.USER_SIGNUP_ATTRIBUTE;
-	private final String PATH_COOKIES = Properties.PATH_COOKIES;
-	private final String USER_ID_ATTRIBUTE = Properties.USER_ID_ATTRIBUTE;
 
-	private String domainNameCookies = Properties.domainNameCookies;	
+	private final String TOKEN_COOKIE_NAME = Properties.TOKEN_COOKIE_NAME;
+	private final String REMEMBER_COOKIE_NAME = Properties.REMEMBER_COOKIE_NAME;
+	//private final String ENTITY_ID_ATTRIBUTE = Properties.ENTITY_ID_ATTRIBUTE;
+	private final String PATH_COOKIES = Properties.PATH_COOKIES;
+	
 	private Cookie token_cookie = null;
 	private Cookie remember_cookie = null;
-	
-	
 
 	/**
 	 * Used when a user try to login. It check if the params are ok and if they are,
@@ -104,17 +107,21 @@ public class AuthController {
 			HttpServletResponse response) {
 		Authentication authentication;
 		User user = null;
-		
-		try {	
+
+		try {
+
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+			user = userDetailsService.loadUserModelByUsername(loginRequest.getUsername());
 			
-		 authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-		 
-		 user = userDetailsService.loadUserModelByUsername(loginRequest.getUsername());
-		 
-		}catch(AuthenticationException e) {
+			/*Important! Setting default user database.
+			utentiTemplate.setDefaultUserDb(user.getId());*/
+
+		} catch (AuthenticationException e) {
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body(new MessageResponse("Attenzione! Le credenziali non sono corrette"));
+			return ResponseEntity.badRequest()
+					.body(new MessageResponse("Attenzione! Le credenziali non sono corrette"));
 		}
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -123,18 +130,17 @@ public class AuthController {
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-		
-		
-		if (setCookie(loginRequest.isRememberMe(), token, response)) {
-			if(token_cookie != null)
-				response.addCookie(token_cookie);
-			if(remember_cookie != null)
-				response.addCookie(remember_cookie);
-				return ResponseEntity.ok(new JwtResponse(token, userDetails.getId(), userDetails.getUsername(),
-						userDetails.getEmail(), roles));
-		}	
 
-		return ResponseEntity.badRequest().body(new MessageResponse("Errore: Qualcosa è andato storto!"));		
+		if (setCookie(loginRequest.isRememberMe(), token, response)) {
+			if (token_cookie != null)
+				response.addCookie(token_cookie);
+			if (remember_cookie != null)
+				response.addCookie(remember_cookie);
+			return ResponseEntity.ok(new JwtResponse(token, userDetails.getId(), userDetails.getUsername(),
+					userDetails.getEmail(), roles));
+		}
+
+		return ResponseEntity.badRequest().body(new MessageResponse("Errore: Qualcosa è andato storto!"));
 	}
 
 	/**
@@ -149,7 +155,7 @@ public class AuthController {
 	public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		String authToken = request.getHeader(Properties.tokenHeader);
+		String authToken = request.getHeader(properties.getTokenHeader());
 		boolean rememberMe = false;
 
 		Cookie[] cookies = request.getCookies();
@@ -163,12 +169,12 @@ public class AuthController {
 		}
 
 		final String token = null;
-		if(authToken != null)
+		if (authToken != null)
 			authToken.substring(7);
 
 		if (jwtUtils.canTokenBeRefreshed(token)) {
 			String refreshedToken = jwtUtils.refreshToken(token, rememberMe);
-			response.setHeader(Properties.tokenHeader, refreshedToken);
+			response.setHeader(properties.getTokenHeader(), refreshedToken);
 
 			response.setHeader("exp", jwtUtils.getExpirationDateFromToken(refreshedToken).toString());
 
@@ -185,68 +191,63 @@ public class AuthController {
 	 * roles.
 	 * 
 	 * @param signUpRequest
-	 * @param request 
+	 * @param request
 	 * @return badRequest if something went wrong or a ok response instead.
 	 */
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(/*@Valid*/ @RequestBody SignupRequest signUpRequest, HttpServletRequest request) {
+	public ResponseEntity<?> registerUser(/* @Valid */ @RequestBody SignupRequest signUpRequest,
+			HttpServletRequest request) {
 
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+		try {
+			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+				return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+			}
+
+			if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+				return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+			}
+
+			// Create new user's account
+			User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
+					encoder.encode(signUpRequest.getPassword()));
+
+			Set<String> strRoles = signUpRequest.getRoles();
+			Set<Role> roles = new HashSet<>();
+
+			if (strRoles == null) {
+				roles.add(roleRepository.findByName(ERole.ROLE_BASIC).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+			} else {
+				strRoles.forEach(role -> {
+					switch (role) {
+					case "admin":
+						roles.add(roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						break;
+					case "editor":
+						roles.add(roleRepository.findByName(ERole.ROLE_EDITOR).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						break;
+					case "basic":
+					default:
+						roles.add(roleRepository.findByName(ERole.ROLE_BASIC).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						roles.add(roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						break;
+					}
+				});
+			}
+
+			user.setRoles(roles);
+			// Save user into user collection in general DB for authentication
+			Utente u = new Utente(userRepository.save(user));
+
+			// Save user into Utente collection in the personal database of the user
+			utentiTemplate.setDefaultUserDb(u.getId());
+			userDetailsService.save(u);
+
+			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(new MessageResponse("User registration failed!"));
 		}
-
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-		}
-
-		// Create new user's account
-		User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-				encoder.encode(signUpRequest.getPassword()));
-
-		Set<String> strRoles = signUpRequest.getRoles();
-		Set<Role> roles = new HashSet<>();
-
-		if (strRoles == null) {
-			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-			roles.add(userRole);
-		} else {
-			strRoles.forEach(role -> {
-				switch (role) {
-				case "admin":
-					Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-					roles.add(adminRole);
-
-					break;
-				case "mod":
-					Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-					roles.add(modRole);
-
-					break;
-				case "user":
-				default:
-					Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-					roles.add(userRole);
-				}
-			});
-		}
-		
-		user.setRoles(roles);
-		//user = userRepository.save(user);		
-		System.out.println("SALVA AUTH");
-		//user.setTenantId("tenant_" + user.getId());
-		Utente u = new Utente(userRepository.save(user));
-		
-		request.setAttribute(USER_ID_ATTRIBUTE, u.getId());
-		request.setAttribute(USER_SIGNUP_ATTRIBUTE, true);
-		
-		userDetailsService.save(u);
-		
-
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
 	private boolean setCookie(boolean rememberMe, String token, HttpServletResponse response) {
@@ -255,21 +256,21 @@ public class AuthController {
 			remember_cookie = new Cookie(REMEMBER_COOKIE_NAME, "" + rememberMe);
 			remember_cookie.setSecure(false); // Set this to true if you're working through https
 			remember_cookie.setHttpOnly(false);
-			remember_cookie.setDomain(domainNameCookies);
+			remember_cookie.setDomain(properties.getDomainNameCookies());
 			remember_cookie.setPath(PATH_COOKIES); // global cookie accessible every where
 
 			token_cookie = new Cookie(TOKEN_COOKIE_NAME, token);
 			token_cookie.setSecure(false); // Set this to true if you're working through https
 			token_cookie.setHttpOnly(false);
-			token_cookie.setDomain(domainNameCookies);
+			token_cookie.setDomain(properties.getDomainNameCookies());
 			token_cookie.setPath(PATH_COOKIES); // global cookie accessible every where
 
 			if (!rememberMe) {
-				token_cookie.setMaxAge(Properties.jwtExpirationMs / 1000);
-				remember_cookie.setMaxAge(Properties.jwtExpirationMs / 1000);
+				token_cookie.setMaxAge(properties.getJwtExpirationMs() / 1000);
+				remember_cookie.setMaxAge(properties.getJwtExpirationMs() / 1000);
 			} else {
-				token_cookie.setMaxAge((int) (Properties.jwtExpirationMsRememberMe / 1000));
-				remember_cookie.setMaxAge((int) (Properties.jwtExpirationMsRememberMe / 1000));
+				token_cookie.setMaxAge((int) (properties.getJwtExpirationMsRememberMe() / 1000));
+				remember_cookie.setMaxAge((int) (properties.getJwtExpirationMsRememberMe() / 1000));
 			}
 
 			return true;
@@ -279,17 +280,17 @@ public class AuthController {
 
 		return false;
 	}
-	
-	@PostMapping(value= "/getAll", produces = "application/json")
-	public ResponseEntity<?> listAllUsr(){
+
+	@PostMapping(value = "/getAll", produces = "application/json")
+	public ResponseEntity<?> listAllUsr() {
 
 		ArrayList<User> utenti = userDetailsService.loadAllUsers();
-		if(utenti == null || utenti.isEmpty()) {
+		if (utenti == null || utenti.isEmpty()) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Non è stato trovato alcun utente!"));
 		}
-		
+
 		return new ResponseEntity<ArrayList<User>>(utenti, HttpStatus.OK);
-		
+
 	}
 
 }

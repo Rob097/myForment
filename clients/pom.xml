@@ -10,12 +10,12 @@
 	<artifactId>clients</artifactId>
 	<packaging>jar</packaging>
 	
-	<!-- <dependencies>
+	<dependencies>
 		<dependency>
-			<groupId>com.multitenant.jwt</groupId>
-			<artifactId>runnable</artifactId>
+			<groupId>com.myforment</groupId>
+			<artifactId>users</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-	</dependencies>-->
+	</dependencies>
 
 </project>

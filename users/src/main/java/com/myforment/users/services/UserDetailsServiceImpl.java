@@ -11,8 +11,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.myforment.users.models.Contract;
 import com.myforment.users.models.User;
 import com.myforment.users.models.Utente;
+import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.users.repository.UserRepository;
 
 /**
@@ -30,8 +32,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	@Autowired
 	@Qualifier("utentiTemplate")
-	private MongoTemplate utentiTemplate;
-
+	private MongoTemplateCustom utentiTemplate;	
+	
+	//============================================================================================================================
+	
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -41,26 +45,53 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return UserDetailsImpl.build(user);
 	}
 	
+	//============================================================================================================================
+	
 	public User loadUserModelByUsername(String username) throws UsernameNotFoundException {
 		
 		return userRepository.findByUsername(username).orElse(null);		
 		
 	}
 	
+	//============================================================================================================================
+	
+	public Utente loadUtenteModelById(String id) throws UsernameNotFoundException {
+		
+		return utentiTemplate.findById(id, Utente.class);		
+		
+	}
+
+	//============================================================================================================================
+	
 	public ArrayList<User> loadAllUsers(){
 		return (ArrayList<User>) mongoTemplate.findAll(User.class);
 	}
+
+	//============================================================================================================================
 	
 	public Utente save(Utente u) {
-		System.out.println("SALVA");
 		try {
 			utentiTemplate.save(u);
 			return u;
 		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
+			e.printStackTrace();			
 		}
+		return null;
 		
 	}
 
+	//============================================================================================================================
+	
+	public Contract addContract(Utente u, Contract c) {
+		try {
+			utentiTemplate.save(c);		
+			return c;
+		}catch(Exception e) {
+			e.printStackTrace();			
+		}
+		return null;
+	}
+	
+	//============================================================================================================================
+	
 }

@@ -170,5 +170,6 @@
 		<module>runnable</module>
 		<module>clients</module>
 		<module>users</module>
+		<module>companies</module>
 	</modules>
 </project>

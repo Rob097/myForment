@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,9 @@ import io.jsonwebtoken.impl.DefaultClock;
 public class JwtUtils implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Autowired
+	private Properties properties;
 
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
@@ -55,23 +59,23 @@ public class JwtUtils implements Serializable {
 			claims.put(USER_ID_ATTRIBUTE, userId);
 		
 		if(rememberMe) {
-			exp = Properties.jwtExpirationMsRememberMe;
+			exp = properties.getJwtExpirationMsRememberMe();
 		}else {
-			exp = Properties.jwtExpirationMs;
+			exp = properties.getJwtExpirationMs();
 		}
 
 		return Jwts.builder().setClaims(claims).setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + exp))
-				.signWith(SignatureAlgorithm.HS512, Properties.jwtSecret).compact();
+				.signWith(SignatureAlgorithm.HS512, properties.getJwtSecret()).compact();
 	}
 
 	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parser().setSigningKey(Properties.jwtSecret).parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parser().setSigningKey(properties.getJwtSecret()).parseClaimsJws(token).getBody().getSubject();
 	}
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			Jwts.parser().setSigningKey(Properties.jwtSecret).parseClaimsJws(authToken);
+			Jwts.parser().setSigningKey(properties.getJwtSecret()).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());
@@ -95,7 +99,7 @@ public class JwtUtils implements Serializable {
 
 	Claims getAllClaimsFromToken(String token) {
 		try {
-			Claims claims = Jwts.parser().setSigningKey(Properties.jwtSecret).parseClaimsJws(token).getBody();
+			Claims claims = Jwts.parser().setSigningKey(properties.getJwtSecret()).parseClaimsJws(token).getBody();
 			return claims;
 		} catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());
@@ -143,10 +147,10 @@ public class JwtUtils implements Serializable {
 	private Date calculateExpirationDate(Date createdDate, boolean rememberMe) {
 		
 		if (rememberMe) {
-			return new Date(createdDate.getTime() + Properties.jwtExpirationMsRememberMe);
+			return new Date(createdDate.getTime() + properties.getJwtExpirationMsRememberMe());
 		}else {
 			System.out.println("check: " + rememberMe);
-			return new Date(createdDate.getTime() + Properties.jwtExpirationMs);
+			return new Date(createdDate.getTime() + properties.getJwtExpirationMs());
 		}
 		
 	}
@@ -165,6 +169,6 @@ public class JwtUtils implements Serializable {
 		claims.setIssuedAt(createdDate);
 		claims.setExpiration(expirationDate);
 
-		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, Properties.jwtSecret).compact();
+		return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, properties.getJwtSecret()).compact();
 	}
 }

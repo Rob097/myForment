@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.myforment.users.models.ERole;
 import com.myforment.users.models.Role;
+import com.myforment.users.models.enums.ERole;
 
 /**
  * @author Roberto97

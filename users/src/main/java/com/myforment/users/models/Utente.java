@@ -1,5 +1,6 @@
 package com.myforment.users.models;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +12,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.myforment.users.models.enums.EGender;
+import com.myforment.users.models.enums.ENationality;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +23,7 @@ import lombok.NoArgsConstructor;
  * @author Roberto97
  * Entity of Utente. It is inside the user database and contains all the information of the user
  */
-@Document(collection = "utente")
+@Document(collection = "user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,19 +46,26 @@ public class Utente {
 	private String password;
 	
 	@NotBlank
-	private String nome;
+	private String name;
 	@NotBlank
-	private String cognome;
+	private String surname;
 	
-	private Gender gender;
-	private String telefono;
-	private String indirizzo;
-	private Nationality nazionalità;
+	private EGender gender;
+	private String phone;
+	private Address address;
+	private ENationality nationality;
 	private String avatar;
+	
+	private Timestamp birthDate;
 
 	@DBRef
-	private Set<Role> roles = new HashSet<>();	
-
+	private Set<Role> roles = new HashSet<>();
+	
+	
+	
+	
+	/* CONSTRUCTORS */
+	
 	public Utente(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
 			@NotBlank @Size(max = 120) String password, @NotBlank String nome, @NotBlank String cognome) {
 		super();
@@ -68,8 +79,8 @@ public class Utente {
 		this.username = u.getUsername();
 		this.email = u.getEmail();
 		this.password = u.getPassword();
-		this.nome = u.getUsername();
-		this.cognome = "";
+		this.name = u.getUsername();
+		this.surname = "";
 		this.roles = u.getRoles();
 	}
 	

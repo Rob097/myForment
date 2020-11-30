@@ -33,6 +33,16 @@ Well Done! Now you just need to create your modules:
 
 ## Mongo Database
 The database is developed using the NoSql technology by MongoDB.
+This is a multiTenant project so I've used mongoFactory and mongoTemplate to connecto to the different databases of the project.
+A general and default database is also a prefix. Every user has is own database with his information and eventually his contracts.
+Every company has it's own database with employee, ecc...
+A copy with most important information of each user and each company are also stored in the default database.
+The user's database is called *databasePrefix*_user_*userId*
+The company's database is called *databasePrefix*_company_*companyId*
+
+Every kind of database has it's own mongoTemplate. As you can see every user's and every company's database are customized with theyr own id, so,
+in order to access to the righ database, when you use, for instance, usersTemplate or companyTemplate, before using them you HAVE to set 
+the session attribute *ENTITY_ID_ATTRIBUTE* with the respective entity id. (request.setAttribute(ENTITY_ID_ATTRIBUTE, user.getId());)
 
 ## React frontend
 The frontend is developed in React JS and it is fully commented to explain everything.

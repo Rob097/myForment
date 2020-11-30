@@ -76,12 +76,12 @@ public class ClientiController {
 	@RequestMapping(value= "/cerca/codice/{codfid}", method= RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> getCliByCode(@PathVariable("codfid") String CodFid){
 		
-		Clienti cliente = clientiService.SelByCodFid(CodFid);
-		if(cliente == null) {
+		Clienti clienti = clientiService.SelByCodFid(CodFid);
+		if(clienti == null) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Non è stato trovato alcun cliente con questo Codice Fidelity!"));
 		}
 		
-		return new ResponseEntity<Clienti>(cliente, HttpStatus.OK);
+		return new ResponseEntity<Clienti>(clienti, HttpStatus.OK);
 		
 	}
 	

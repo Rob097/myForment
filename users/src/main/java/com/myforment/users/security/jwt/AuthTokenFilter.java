@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.users.security.configuration.Properties;
 
 import io.jsonwebtoken.Claims;
@@ -34,7 +36,14 @@ import io.jsonwebtoken.Jwts;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private JwtUtils jwtUtils;	
+	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private Properties properties;
+	
+	@Autowired
+	@Qualifier("utentiTemplate")
+	private MongoTemplateCustom utentiTemplate;
 	
 	private final String idAuthorities = Properties.Id_AUTHORITIES;
 	
@@ -61,11 +70,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 				
 				String userId = jwtUtils.getClaim(jwt, USER_ID_ATTRIBUTE, String.class);
 				
-				//Se il tenantId recuperato dai claims del token è valido, lo imposto come attributo di request.
+				//Se il tenantId recuperato dai claims del token è valido, lo imposto come default user id e database del template user di mongo.
 				//L'attributo viene utilizzato dalla MultitenantMongoDbFactory per trovare il giusto database.
 				if(userId != null) {
 
-					request.setAttribute(USER_ID_ATTRIBUTE, userId);
+					//Important! Setting default user database.
+					utentiTemplate.setDefaultUserDb(userId);
 
 				}
 				
@@ -82,10 +92,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	}
 	
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request, String jwt) {
-        String token = request.getHeader(Properties.tokenHeader);
+        String token = request.getHeader(properties.getTokenHeader());
         if (token != null) {
             // parse the token.
-            String user = Jwts.parser().setSigningKey(Properties.jwtSecret).parseClaimsJws(jwt).getBody().getSubject();
+            String user = Jwts.parser().setSigningKey(properties.getJwtSecret()).parseClaimsJws(jwt).getBody().getSubject();
 
             if (user != null) {
             	
@@ -121,9 +131,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
 	private String parseJwt(HttpServletRequest request) {
-		String headerAuth = request.getHeader(Properties.tokenHeader);
+		String headerAuth = request.getHeader(properties.getTokenHeader());
 
-		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(Properties.tokenConstant) && headerAuth.length() > 7) {
+		if (headerAuth != null && StringUtils.hasText(headerAuth) && headerAuth.startsWith(properties.getTokenConstant()) && headerAuth.length() > 7) {
 			return headerAuth.substring(7, headerAuth.length());
 		}else {			
 			return null;

@@ -33,9 +33,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * ADMIN_MATCHER: Path where you need to have the role of admin to access at.
 	 * MOD_MATCHER: Path where you need to have the moderator of user to access at.
 	 */
-	private static final String[] USER_MATCHER = { "/api/clienti/cerca/**"};
+	private static final String[] BASIC_MATCHER = { "/api/clienti/cerca/**", "/api/companies/**"};
 	private static final String[] ADMIN_MATCHER = { "/api/clienti/inserisci/**", "/api/clienti/elimina/**", "/api/auth/getAll" };
-	private static final String[] MOD_MATCHER = {};
+	private static final String[] EDITOR_MATCHER = {};
 	
 	@Autowired
 	UserDetailsServiceImpl userDetailsService;
@@ -89,9 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.OPTIONS).permitAll()
 			.antMatchers("/api/auth/**").permitAll()
 			.antMatchers("/api/test/**").permitAll()
-			.antMatchers(USER_MATCHER).hasAnyRole("USER")
-			.antMatchers(ADMIN_MATCHER).hasAnyRole("ADMIN")
-			.antMatchers(MOD_MATCHER).hasAnyRole("MODERATOR")
+			.antMatchers(BASIC_MATCHER).hasAnyRole(Properties.ROLE_BASIC)
+			.antMatchers(ADMIN_MATCHER).hasAnyRole(Properties.ROLE_ADMIN)
+			.antMatchers(EDITOR_MATCHER).hasAnyRole(Properties.ROLE_EDITOR)
 			.anyRequest().authenticated();
 			
 		
