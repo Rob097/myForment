@@ -1,9 +1,7 @@
 package com.myforment.companies.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,52 +33,78 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
 	HttpServletRequest request;
+	
+	
+	
+	//========================================================================================
 
 	@Override
 	public ArrayList<Company> GetAll() {
 		return new ArrayList<Company>(mongoTemplate.findAll(Company.class));
 	}
 	
+	//========================================================================================
+	
 	@Override
 	public ArrayList<Permission> getAllPermissions() {
 		return new ArrayList<Permission>(mongoTemplate.findAll(Permission.class));
 	}
+	
+	//========================================================================================
 
 	@Override
 	public Company GetById(String id) {
-		return mongoTemplate.findById(id, Company.class);
+		Company c = mongoTemplate.findById(id, Company.class);
+		return c;
 	}
+	
+	//========================================================================================
 
 	//Save copany into general database
 	@Override
 	public Company GeneralSave(Company company) {
-		mongoTemplate.insert(company);
+		mongoTemplate.save(company);
 		return company;
 	}
+	
+	//========================================================================================
 
 	//Add employee to a company
 	@Override
 	public Employee addEmployee(Utente employee, Company company) {
-		Set<Role> roles = new HashSet<>();
+		List<Role> roles = new ArrayList<>();
 		Query query = new Query();
 		List<Role> r = new ArrayList<>();
 		query.addCriteria(Criteria.where("name").is(ERole.ROLE_OWNER));
-		//request.setAttribute(ENTITY_ID_ATTRIBUTE, company.get_id());
-		r = companyTemplate.setDatabaseName(company.get_id().toString()).find(query, Role.class);
+
+		r = companyTemplate.setDatabaseName(company.getIdCom().toString()).find(query, Role.class);
 		
 		roles.addAll(r);
-		Employee e = new Employee(employee, roles);
+		Employee e = new Employee(employee.getId(), roles);
 
-		return companyTemplate.setDatabaseName(company.get_id().toString()).save(e);
+		return companyTemplate.setDatabaseName(company.getIdCom().toString()).save(e);
 	}
+	
+	//========================================================================================
 	
 	@Override
 	public Role addRole(Role role, Company company) {
 
-		companyTemplate.setDatabaseName(company.get_id().toString()).save(role);
+		companyTemplate.setDatabaseName(company.getIdCom().toString()).save(role);
 		
 		return null;
 	}
+	
+	//========================================================================================
+	
+	@Override
+	public Role getRoleById(String id, String companyId) {
+		Role r = companyTemplate.setDatabaseName(companyId).findById(id, Role.class);
+		return r;
+		
+	}
+	
+	//========================================================================================
 
 	/*
 	 * Methods to check if the company already exists checking different parameters
@@ -95,6 +119,8 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return false;
 	}
+	
+	//========================================================================================
 
 	@Override
 	public boolean existByLegalName(String legalName) {
@@ -106,5 +132,7 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return false;
 	}
+	
+	//========================================================================================
 
 }

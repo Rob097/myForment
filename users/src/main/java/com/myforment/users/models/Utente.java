@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.myforment.users.models.enums.EGender;
@@ -58,8 +57,7 @@ public class Utente {
 	
 	private Timestamp birthDate;
 
-	@DBRef
-	private Set<Role> roles = new HashSet<>();
+	private Set<String> rolesId = new HashSet<>();
 	
 	
 	
@@ -81,7 +79,9 @@ public class Utente {
 		this.password = u.getPassword();
 		this.name = u.getUsername();
 		this.surname = "";
-		this.roles = u.getRoles();
+		for (Role role : u.getRoles()) {
+			this.rolesId.add(role.getId());
+		}
 	}
 	
 	

@@ -5,15 +5,16 @@ import HandleError from "../../Errors/HandleError.js"
 
 export default class CompanyDataComponent extends Component {
     state = {
-        id: '',
+        idCom: '',
         name: '',
-        logo: '',
-        addressLineOne: '',
-        addressLineTwo: '',
-        cap: '',
-        city: '',
-        province: '',
-        country: '',
+        logo: 'logo',
+        ownerId: '',
+            addressLineOne: '',
+            addressLineTwo: '',
+            city: '',
+            cap: '',
+            province: '',
+            country: '',
         legalName: '',
         email: '',
         sector: '',
@@ -27,9 +28,9 @@ export default class CompanyDataComponent extends Component {
         let id = this.props.match.params.id;
 
         if (id != "-1") {
-            /*ClientiService.getClientiByCode(CodFid)
+            CompaniesService.getCompanyById(id)
                 .then(response => this.handleResponse(response))
-                .catch(error => HandleError.handleError(this, error))*/
+                .catch(error => HandleError.handleError(this, error))
         }
     }
 
@@ -38,36 +39,41 @@ export default class CompanyDataComponent extends Component {
     handleResponse(response) {
 
         this.setState({
-            id: response.data.id,
+            idCom: response.data.idCom,
             name: response.data.name,
-            logo: response.data.logo,
-            addressLineOne: response.data.addressLineOne,
-            addressLineTwo: response.data.addressLineTwo,
-            cap: response.data.cap,
-            city: response.data.city,
-            province: response.data.province,
-            country: response.data.country,
+            ownerId: response.data.ownerId,
+            addressLineOne: response.data.address.addressLineOne,
+                addressLineTwo: response.data.address.addressLineTwo,
+                city: response.data.address.city,
+                cap: response.data.address.cap,
+                province: response.data.address.province,
+                country: response.data.address.country,
             legalName: response.data.legalName,
             email: response.data.email,
             sector: response.data.sector,
             okMsg: null,
         })
-
+        console.log("%O", this.state);
     }
 
     //Metodo per salvare il nuovo o aggiornare uno esistente
     Salva = (values) => {
 
+        console.log("SALVA: %O", values)
+
         CompaniesService.insCompany({
-            id: values.id,
+            idCom: values.idCom,
             name: values.name,
-            logo: values.logo,
-            addressLineOne: values.addressLineOne,
-            addressLineTwo: values.addressLineTwo,
-            cap: values.cap,
-            city: values.city,
-            province: values.province,
-            country: values.country,
+            logo: "logo",
+            ownerId: values.ownerId,
+            address: {
+                addressLineOne: values.addressLineOne,
+                addressLineTwo: values.addressLineTwo,
+                city: values.city,
+                cap: values.cap,
+                province: values.province,
+                country: values.country
+            },
             legalName: values.legalName,
             email: values.email,
             sector: values.sector
@@ -83,7 +89,7 @@ export default class CompanyDataComponent extends Component {
     //Metodo per annullare le modifiche e ritornare a tutti i clienti
     Annulla = () => {
         if (window.confirm("Abbandoni le modifiche?")) {
-            this.props.history.push(`/clienti`);
+            this.props.history.push(`/companies`);
         }
     }
 
@@ -105,7 +111,7 @@ export default class CompanyDataComponent extends Component {
         if (!values.cap) {
             errors.cap = "Inserisci il cap della città dell'azienda"
         }
-        
+
         if (!values.city) {
             errors.city = "Inserisci la città dell'azienda"
         }
@@ -121,10 +127,12 @@ export default class CompanyDataComponent extends Component {
         return errors;
     }
 
+
+
     render() {
 
         //Imposto il valore dei campi della form con quelli salvati nello state. ATTENZIONE, questi nomi devo essere uguali a quelli dello state.
-        let { id, name, logo, addressLineOne, addressLineTwo, cap, city, province, country, legalName, email, sector} = this.state;
+        let { idCom, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector } = this.state;
 
         return (
             <section className="container">
@@ -132,13 +140,14 @@ export default class CompanyDataComponent extends Component {
                     <div className="card-body">
                         <h3 className="card-title mb-4">Dati Azienda</h3>
 
+
                         <Formik
                             //Inizio della FORM. Per crearla utilizzo FORMIK
                             //Imposto i valori iniziali. ATTENZIONE, questi nomi devono essere uguali a quelli dell'id dei campi della form
-                            initialValues={{ id, name, logo, addressLineOne, addressLineTwo, cap, city, province, country, legalName, email, sector }}
+                            initialValues={{ idCom, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector }}
 
                             //Nel submit della FORM chiamo il metodo salva
-                            onSubmit={this.Salva}
+                            onSubmit={(values) => this.Salva(values)}
 
                             //Con questa proprietà i parametri vengono inizializzati all'avvio
                             enableReinitialize={true}
@@ -154,7 +163,7 @@ export default class CompanyDataComponent extends Component {
                             {
 
                                 (props) => (
-
+                                    
                                     <Form>
 
                                         <div className="form-group">
@@ -200,13 +209,13 @@ export default class CompanyDataComponent extends Component {
                                                     <option value="NU">Nuoro...</option>
                                                     <option value="BZ">Bolzano...</option>
                                                     <option value="TN">Trento...</option>
-                                                </Field>                                                
+                                                </Field>
                                                 <ErrorMessage name="province" component="span" className="errmsg" />
                                             </div>
                                         </div>
 
                                         <div className="form-row">
-                                        <div className="col form-group">
+                                            <div className="col form-group">
                                                 <label>Settore</label>
                                                 <Field as="select" name="sector" className="form-control" >
                                                     <option value="">Seleziona...</option>
@@ -215,7 +224,7 @@ export default class CompanyDataComponent extends Component {
                                                     <option value="Informatica">Informatica</option>
                                                     <option value="Idraulica">Idraulica</option>
                                                     <option value="Falegnameria">Falegnameria</option>
-                                                </Field>                                                
+                                                </Field>
                                                 <ErrorMessage name="sector" component="span" className="errmsg" />
                                             </div>
                                             <div className="col form-group">
@@ -225,8 +234,8 @@ export default class CompanyDataComponent extends Component {
                                         </div>
 
                                         <div>
-                                            <button type="submit" className="btn btn-primary inscli">Salva</button>
-                                            <button type="button" onClick={this.Annulla} className="btn btn-warning inscli">Annulla</button>
+                                            <button type="submit" className="btn btn-primary insCom">Salva</button>
+                                            <button type="button" onClick={this.Annulla} className="btn btn-warning insCom">Annulla</button>
                                         </div>
 
                                     </Form>

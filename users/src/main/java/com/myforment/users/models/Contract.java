@@ -1,13 +1,12 @@
 package com.myforment.users.models;
 
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -30,12 +29,11 @@ public class Contract {
 	@NotBlank
 	private String companyId;
 	
-	@DBRef
-	private Set<?> roles = new HashSet<>();	
+	private List<String> rolesId = new ArrayList<>();	
 	
 	//Data di inizio del contratto. è obbligatoria
 	@NotBlank
-	private Timestamp startDate;
+	private Date startDate;
 	
 	//Il contratto si rinnova?
 	@NotBlank
@@ -45,7 +43,7 @@ public class Contract {
 	private String renewalCadence;
 	
 	//Se il contratto non si rinnova, quando termina?
-	private Timestamp endDate;
+	private Date endDate;
 	
 	@NotBlank
 	private String jobType;
@@ -53,33 +51,30 @@ public class Contract {
 	
 	/* CONSTRUCTORS */
 
-	public Contract(@NotBlank String companyId, Set<?> roles, @NotBlank Timestamp startDate,
-			@NotBlank boolean isRenewable, String renewalCadence, @NotBlank String jobType) {
+	public Contract(@NotBlank String companyId, List<String> rolesId, @NotBlank Date startDate, @NotBlank boolean isRenewable, String renewalCadence, @NotBlank String jobType) {
 		super();
 		this.companyId = companyId;
-		this.roles = roles;
+		this.rolesId = rolesId;
 		this.startDate = startDate;
 		this.isRenewable = isRenewable;
 		this.renewalCadence = renewalCadence;
 		this.jobType = jobType;
 	}
 
-	public Contract(@NotBlank String companyId, Set<?> roles, @NotBlank Timestamp startDate,
-			@NotBlank boolean isRenewable, Timestamp endDate, @NotBlank String jobType) {
+	public Contract(@NotBlank String companyId, List<String> rolesId, @NotBlank Date startDate, @NotBlank boolean isRenewable, Date endDate, @NotBlank String jobType) {
 		super();
 		this.companyId = companyId;
-		this.roles = roles;
+		this.rolesId = rolesId;
 		this.startDate = startDate;
 		this.isRenewable = isRenewable;
 		this.endDate = endDate;
 		this.jobType = jobType;
 	}
 	
-	public Contract(@NotBlank String companyId, Set<?> roles, @NotBlank Timestamp startDate,
-			@NotBlank boolean isRenewable, @NotBlank String jobType) {
+	public Contract(@NotBlank String companyId, List<String> rolesId, @NotBlank Date startDate, @NotBlank boolean isRenewable, @NotBlank String jobType) {
 		super();
 		this.companyId = companyId;
-		this.roles = roles;
+		this.rolesId = rolesId;
 		this.startDate = startDate;
 		this.isRenewable = isRenewable;
 		this.jobType = jobType;

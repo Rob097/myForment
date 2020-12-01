@@ -22,6 +22,7 @@ class CompaniesService {
     }
 
     insCompany = (company) => {
+        console.log("%O", company);
         return axios.post(`${this.state.Server}${this.state.BaseURL}/insert`, company);
     }
 

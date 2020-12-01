@@ -15,33 +15,34 @@ Class-Path: dependency-jars/spring-boot-starter-web-2.3.5.RELEASE.jar de
  embed-websocket-9.0.39.jar dependency-jars/spring-web-5.2.10.RELEASE.ja
  r dependency-jars/spring-webmvc-5.2.10.RELEASE.jar dependency-jars/user
  s-0.0.1-SNAPSHOT.jar dependency-jars/clients-0.0.1-SNAPSHOT.jar depende
- ncy-jars/companies-0.0.1-SNAPSHOT.jar dependency-jars/spring-boot-devto
- ols-2.3.5.RELEASE.jar dependency-jars/spring-boot-2.3.5.RELEASE.jar dep
- endency-jars/spring-boot-autoconfigure-2.3.5.RELEASE.jar dependency-jar
- s/lombok-1.18.16.jar dependency-jars/spring-core-5.2.10.RELEASE.jar dep
- endency-jars/spring-jcl-5.2.10.RELEASE.jar dependency-jars/spring-boot-
- starter-security-2.3.5.RELEASE.jar dependency-jars/spring-aop-5.2.10.RE
- LEASE.jar dependency-jars/spring-security-config-5.3.5.RELEASE.jar depe
- ndency-jars/spring-security-core-5.3.5.RELEASE.jar dependency-jars/spri
- ng-security-web-5.3.5.RELEASE.jar dependency-jars/spring-boot-configura
- tion-processor-2.3.5.RELEASE.jar dependency-jars/jjwt-0.9.1.jar depende
- ncy-jars/jackson-databind-2.11.3.jar dependency-jars/jackson-annotation
- s-2.11.3.jar dependency-jars/jackson-core-2.11.3.jar dependency-jars/ja
- karta.xml.bind-api-2.3.3.jar dependency-jars/jakarta.activation-api-1.2
- .2.jar dependency-jars/jaxb-runtime-2.3.3.jar dependency-jars/txw2-2.3.
- 3.jar dependency-jars/istack-commons-runtime-3.0.11.jar dependency-jars
- /jakarta.activation-1.2.2.jar dependency-jars/validation-api-2.0.1.Fina
- l.jar dependency-jars/jaxb-api-2.3.1.jar dependency-jars/javax.activati
- on-api-1.2.0.jar dependency-jars/spring-data-mongodb-3.0.5.RELEASE.jar 
- dependency-jars/spring-tx-5.2.10.RELEASE.jar dependency-jars/spring-con
- text-5.2.10.RELEASE.jar dependency-jars/spring-beans-5.2.10.RELEASE.jar
-  dependency-jars/spring-expression-5.2.10.RELEASE.jar dependency-jars/s
- pring-data-commons-2.3.5.RELEASE.jar dependency-jars/slf4j-api-1.7.30.j
- ar dependency-jars/mongodb-driver-core-4.0.5.jar dependency-jars/bson-4
- .0.5.jar dependency-jars/mongodb-driver-sync-4.0.5.jar dependency-jars/
- mongodb-driver-legacy-4.0.5.jar dependency-jars/mongodb-driver-3.10.1.j
- ar dependency-jars/mongo-java-driver-3.10.1.jar dependency-jars/spring-
- boot-starter-data-mongodb-2.3.5.RELEASE.jar
+ ncy-jars/companies-0.0.1-SNAPSHOT.jar dependency-jars/jasypt-1.9.0.jar 
+ dependency-jars/spring-boot-devtools-2.3.5.RELEASE.jar dependency-jars/
+ spring-boot-2.3.5.RELEASE.jar dependency-jars/spring-boot-autoconfigure
+ -2.3.5.RELEASE.jar dependency-jars/lombok-1.18.16.jar dependency-jars/s
+ pring-core-5.2.10.RELEASE.jar dependency-jars/spring-jcl-5.2.10.RELEASE
+ .jar dependency-jars/spring-boot-starter-security-2.3.5.RELEASE.jar dep
+ endency-jars/spring-aop-5.2.10.RELEASE.jar dependency-jars/spring-secur
+ ity-config-5.3.5.RELEASE.jar dependency-jars/spring-security-core-5.3.5
+ .RELEASE.jar dependency-jars/spring-security-web-5.3.5.RELEASE.jar depe
+ ndency-jars/spring-boot-configuration-processor-2.3.5.RELEASE.jar depen
+ dency-jars/jjwt-0.9.1.jar dependency-jars/jackson-databind-2.11.3.jar d
+ ependency-jars/jackson-annotations-2.11.3.jar dependency-jars/jackson-c
+ ore-2.11.3.jar dependency-jars/jakarta.xml.bind-api-2.3.3.jar dependenc
+ y-jars/jakarta.activation-api-1.2.2.jar dependency-jars/jaxb-runtime-2.
+ 3.3.jar dependency-jars/txw2-2.3.3.jar dependency-jars/istack-commons-r
+ untime-3.0.11.jar dependency-jars/jakarta.activation-1.2.2.jar dependen
+ cy-jars/validation-api-2.0.1.Final.jar dependency-jars/jaxb-api-2.3.1.j
+ ar dependency-jars/javax.activation-api-1.2.0.jar dependency-jars/sprin
+ g-data-mongodb-3.0.5.RELEASE.jar dependency-jars/spring-tx-5.2.10.RELEA
+ SE.jar dependency-jars/spring-context-5.2.10.RELEASE.jar dependency-jar
+ s/spring-beans-5.2.10.RELEASE.jar dependency-jars/spring-expression-5.2
+ .10.RELEASE.jar dependency-jars/spring-data-commons-2.3.5.RELEASE.jar d
+ ependency-jars/slf4j-api-1.7.30.jar dependency-jars/mongodb-driver-core
+ -4.0.5.jar dependency-jars/bson-4.0.5.jar dependency-jars/mongodb-drive
+ r-sync-4.0.5.jar dependency-jars/mongodb-driver-legacy-4.0.5.jar depend
+ ency-jars/mongodb-driver-3.10.1.jar dependency-jars/mongo-java-driver-3
+ .10.1.jar dependency-jars/spring-boot-starter-data-mongodb-2.3.5.RELEAS
+ E.jar
 Implementation-Title: runnable
 Implementation-Version: 0.0.1-SNAPSHOT
 Main-Class: com.myforment.runnable.main.Application

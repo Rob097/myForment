@@ -1,17 +1,13 @@
 package com.myforment.companies.models;
 
-import java.sql.Timestamp;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.myforment.users.models.Address;
-import com.myforment.users.models.Utente;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,11 +24,10 @@ import lombok.NoArgsConstructor;
 public class Company {
 	
 	@Id
-	private ObjectId _id;
+	private String idCom;
 	
 	@NotBlank
-	@DBRef
-	private Utente owner;
+	private String ownerId;
 	
 	@NotBlank
 	private String name;
@@ -40,7 +35,6 @@ public class Company {
 	@NotBlank
 	private String logo;
 	
-	@DBRef
 	private Address address;
 	
 	private String legalName;
@@ -52,8 +46,7 @@ public class Company {
 	@NotBlank
 	private String sector;
 	
-	@NotBlank
-	private Timestamp creationDate;	
+	
 	
 	
 }

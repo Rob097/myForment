@@ -4,7 +4,6 @@
 class HandleError {
 
     handleError = (obj, error) => {
-        
         if (error.response.status === 403) {
             obj.setState({
                 ErrMsg: "Non hai il permesso di eseguire questa funzionaltà",

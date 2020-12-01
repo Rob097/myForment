@@ -22,6 +22,8 @@ public interface CompanyService {
 	
 	public Role addRole(Role role, Company company);
 	
+	public Role getRoleById(String id, String companyId);
+	
 	public boolean existByName(String name);
 	
 	public boolean existByLegalName(String name);

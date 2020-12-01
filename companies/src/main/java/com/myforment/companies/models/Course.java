@@ -25,15 +25,16 @@ public class Course {
 	
 	@Id
 	private String id;
-	
-	@DBRef
+
+	//DBRef works here because team is in the same database of course
+	@DBRef 
 	private Team team;
 	
 	private boolean isParent;
 	
 	@NotBlank
 	private String text;
-	
+
 	@DBRef
 	private List<Course> steps = new ArrayList<>();
 	

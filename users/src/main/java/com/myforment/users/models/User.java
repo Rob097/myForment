@@ -40,7 +40,8 @@ public class User {
 	@Size(max = 120)
 	private String password;
 
-	@DBRef
+	//DBRef works here because roles are in the same database of user
+	@DBRef 
 	private Set<Role> roles = new HashSet<>();
 	
 	

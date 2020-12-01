@@ -26,7 +26,8 @@ public class Role {
   @NotBlank
   private ERole name;
   
+  //DBRef works here because permissions are in the same database of role
+  @DBRef 
   @NotBlank
-  @DBRef
   private List<Permission> permissions;
 }

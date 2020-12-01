@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.myforment.companies.models.enums.ERole;
@@ -27,7 +26,6 @@ public class Role {
   private ERole name;
   
   @NotBlank
-  @DBRef
-  private List<Permission> permissions;
+  private List<String> permissionsId;
 
 }

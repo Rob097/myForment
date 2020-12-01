@@ -1,6 +1,7 @@
 package com.myforment.users.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -86,6 +87,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		try {
 			utentiTemplate.save(c);		
 			return c;
+		}catch(Exception e) {
+			e.printStackTrace();			
+		}
+		return null;
+	}
+	
+	//============================================================================================================================
+	
+	public ArrayList<Contract> getContracts(Utente u) {
+		try {
+			List<Contract> contratti = utentiTemplate.findAll(Contract.class);
+			return (ArrayList<Contract>) contratti;
 		}catch(Exception e) {
 			e.printStackTrace();			
 		}

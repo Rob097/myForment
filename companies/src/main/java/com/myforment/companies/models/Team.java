@@ -34,11 +34,10 @@ public class Team {
 	@NotBlank
 	private String description;
 	
-	@DBRef
-	private List<Utente> teamLeaders = new ArrayList<>();
+	@NotBlank
+	private List<String> teamLeadersId = new ArrayList<>();
 	
-	@DBRef
-	private List<Utente> teamMembers = new ArrayList<>();
+	private List<String> teamMembersId = new ArrayList<>();
 	
 	
 	
@@ -51,12 +50,12 @@ public class Team {
 	}
 
 
-	public Team(String id, @NotBlank String name, @NotBlank String description, List<Utente> teamLeaders) {
+	public Team(String id, @NotBlank String name, @NotBlank String description, List<String> teamLeadersId) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.teamLeaders = teamLeaders;
+		this.teamLeadersId = teamLeadersId;
 	}
 	
 	

@@ -5,6 +5,7 @@ import LogoutComponent from './Logout/LogoutComponent'
 import SignupComponent from './Signup/SignupComponent'
 import WelcomeComponent from "./Welcome/Welcome"
 import Clienti from "./Clienti/Clienti"
+import Companies from "./Companies/Companies"
 import DatiClienteComponent from "./Clienti/InsClienti/DatiCliente"
 import CompanyDataComponent from "./Companies/InsCompany/CompanyData"
 import HeaderComponent from "./Header/HeaderComponent"
@@ -40,7 +41,8 @@ export default class GestFidApp extends Component {
                         <AuthRoute path="/clienti" component={Clienti} role={this.state.Basic} />
 
                         {/* COMPANIES ROUTES */}
-                        <AuthRoute path="/inscompany/:id" component={CompanyDataComponent} role={this.state.Basic} />
+                        <AuthRoute path="/companies" component={Companies} role={this.state.Basic} />
+                        <AuthRoute path="/inscompany/:id" component={CompanyDataComponent} role={this.state.Admin} />
 
                         <Route path="/forbidden" component={ForbComponent} />
 

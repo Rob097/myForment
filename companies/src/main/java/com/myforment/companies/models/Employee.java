@@ -1,7 +1,7 @@
 package com.myforment.companies.models;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
@@ -29,15 +29,15 @@ public class Employee {
 	private String id;
 	
 	@NotBlank
-	@DBRef
-	private Utente user;
+	private String userId;
 	
-	@DBRef
-	private Set<Role> roles = new HashSet<>();
+	//DBRef works here because company roles are in the same database of employee
+	@DBRef 
+	private List<?> roles = new ArrayList<>();
 
-	public Employee(@NotBlank Utente user, Set<Role> roles) {
+	public Employee(@NotBlank String userId, List<?> roles) {
 		super();
-		this.user = user;
+		this.userId = userId;
 		this.roles = roles;
 	}	
 
