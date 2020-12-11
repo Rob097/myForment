@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
  * @author Roberto97
  * Entity of Users. Those who can log in and sign in into the application.
  */
+
 @Document(collection = "users")
 @Data
 @AllArgsConstructor
@@ -43,8 +44,7 @@ public class User {
 	//DBRef works here because roles are in the same database of user
 	@DBRef 
 	private Set<Role> roles = new HashSet<>();
-	
-	
+
 	public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50) @Email String email,
 			@NotBlank @Size(max = 120) String password) {
 		super();
@@ -52,5 +52,6 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
+	
 
 }

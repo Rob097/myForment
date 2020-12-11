@@ -6,10 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.myforment.users.models.Utente;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

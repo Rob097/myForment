@@ -1,138 +1,226 @@
 package com.myforment.companies.services;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.myforment.companies.models.Company;
 import com.myforment.companies.models.Employee;
 import com.myforment.companies.models.Permission;
 import com.myforment.companies.models.Role;
-import com.myforment.users.models.Utente;
-import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.companies.models.enums.ERole;
+import com.myforment.companies.repository.CompanyRepositoryCustom;
+import com.myforment.users.models.User;
+import com.myforment.users.models.Utente;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
-	@Qualifier("companyTemplate")
-	MongoTemplateCustom companyTemplate;
+	@Qualifier("customCompanies") //Annotation used to define which interface implementation to use
+	private CompanyRepositoryCustom companyRepository;
 
-	@Autowired
-	@Qualifier("mongoTemplate")
-	MongoTemplate mongoTemplate;
+	
+	
+	
+	
+	
+	
+	/*
+	 * ################################# COMPANIES #################################
+	 */
+	
+	
+	
 
-	@Autowired
-	HttpServletRequest request;
-	
-	
-	
-	//========================================================================================
+	/* --------------------------------- GET --------------------------------- */
 
-	@Override
-	public ArrayList<Company> GetAll() {
-		return new ArrayList<Company>(mongoTemplate.findAll(Company.class));
-	}
-	
-	//========================================================================================
-	
-	@Override
-	public ArrayList<Permission> getAllPermissions() {
-		return new ArrayList<Permission>(mongoTemplate.findAll(Permission.class));
-	}
-	
-	//========================================================================================
+	// ========================================================================================
 
 	@Override
-	public Company GetById(String id) {
-		Company c = mongoTemplate.findById(id, Company.class);
-		return c;
+	public ArrayList<Company> getAllCompanies() throws Exception {
+		return companyRepository.getAllCompanies();
 	}
-	
-	//========================================================================================
 
-	//Save copany into general database
+	// ========================================================================================
+
 	@Override
-	public Company GeneralSave(Company company) {
-		mongoTemplate.save(company);
-		return company;
+	public Company getCompanyById(String id) throws Exception {
+		return companyRepository.getCompanyById(id);
 	}
-	
-	//========================================================================================
 
-	//Add employee to a company
-	@Override
-	public Employee addEmployee(Utente employee, Company company) {
-		List<Role> roles = new ArrayList<>();
-		Query query = new Query();
-		List<Role> r = new ArrayList<>();
-		query.addCriteria(Criteria.where("name").is(ERole.ROLE_OWNER));
-
-		r = companyTemplate.setDatabaseName(company.getIdCom().toString()).find(query, Role.class);
-		
-		roles.addAll(r);
-		Employee e = new Employee(employee.getId(), roles);
-
-		return companyTemplate.setDatabaseName(company.getIdCom().toString()).save(e);
-	}
-	
-	//========================================================================================
-	
-	@Override
-	public Role addRole(Role role, Company company) {
-
-		companyTemplate.setDatabaseName(company.getIdCom().toString()).save(role);
-		
-		return null;
-	}
-	
-	//========================================================================================
-	
-	@Override
-	public Role getRoleById(String id, String companyId) {
-		Role r = companyTemplate.setDatabaseName(companyId).findById(id, Role.class);
-		return r;
-		
-	}
-	
-	//========================================================================================
+	// ========================================================================================
 
 	/*
 	 * Methods to check if the company already exists checking different parameters
 	 */
 	@Override
-	public boolean existByName(String name) {
-		if (name != null && !name.isEmpty()) {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("name").is(name));
-			boolean b = mongoTemplate.exists(query, Company.class);
-			return b;
-		}
-		return false;
+	public boolean existCompanyByName(@NotBlank String name) {
+		
+		return companyRepository.existCompanyByName(name);
+		
 	}
-	
-	//========================================================================================
+
+	// ========================================================================================
 
 	@Override
-	public boolean existByLegalName(String legalName) {
-		if (legalName != null && !legalName.isEmpty()) {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("legalName").is(legalName));
-			boolean b = mongoTemplate.exists(query, Company.class);
-			return b;
-		}
-		return false;
+	public boolean existCompanyByLegalName(String legalName) throws Exception {
+
+		return companyRepository.existCompanyByLegalName(legalName);
+		
 	}
+
+	// ========================================================================================
 	
-	//========================================================================================
+	
+
+	/* --------------------------------- ADD --------------------------------- */
+
+	// ========================================================================================
+
+	// Save copany into general database
+	@Override
+	public Company saveCompany(Company company) throws Exception {
+		return companyRepository.saveCompany(company);
+	}
+
+	// ========================================================================================
+	
+	
+
+	/* --------------------------------- REMOVE --------------------------------- */
+
+	// ========================================================================================
+
+	@Override
+	public void removecompany(String companyId) throws Exception {
+
+		companyRepository.removecompany(companyId);
+
+	}
+
+	// ========================================================================================
+	
+	
+	
+	
+	
+	
+
+	/*
+	 * ################################# EMPLOYEES #################################
+	 */
+	
+	
+
+	/* --------------------------------- GET --------------------------------- */
+
+	// ========================================================================================
+
+	@Override
+	public ArrayList<Employee> getAllEmployees(String companyId) throws Exception {
+		return companyRepository.getAllEmployees(companyId);
+	}
+
+	// ========================================================================================
+
+	@Override
+	public ArrayList<String> getAllEmployeesId(String companyId) throws Exception {
+		return companyRepository.getAllEmployeesId(companyId);
+	}
+
+	// ========================================================================================
+
+	@Override
+	public ArrayList<User> loadAllUsersExceptEmployees(String companyId) throws Exception {
+		return companyRepository.loadAllUsersExceptEmployees(companyId);
+	}
+
+	// ========================================================================================
+	
+	
+
+	/* --------------------------------- ADD --------------------------------- */
+
+	// ========================================================================================
+
+	// Add employee to a company
+	@Override
+	public Employee addEmployee(Utente employee, String companyId, ERole role) throws Exception {
+		return companyRepository.addEmployee(employee, companyId, role);
+	}
+
+	// ========================================================================================
+	
+	
+
+	/* --------------------------------- REMOVE --------------------------------- */
+
+	// ========================================================================================
+
+	@Override
+	public void removeEmployeeByUserId(String userId, String companyId) throws Exception {
+
+		companyRepository.removeEmployeeByUserId(userId, companyId);
+
+	}
+
+	// ========================================================================================
+	
+	
+	
+	
+	
+	
+
+	/* ################################# ROLES ################################# */
+	
+	
+
+	/* --------------------------------- GET --------------------------------- */
+
+	// ========================================================================================
+
+	@Override
+	public ArrayList<Permission> getAllPermissions() throws Exception {
+		return companyRepository.getAllPermissions();
+	}
+
+	// ========================================================================================
+
+	@Override
+	public Role getRoleById(String roleId, String companyId) throws Exception {
+
+		return companyRepository.getRoleById(roleId, companyId);
+
+	}
+
+	// ========================================================================================
+
+	@Override
+	public Role getRoleByName(ERole name, String companyId) throws Exception {
+		
+		return companyRepository.getRoleByName(name, companyId);
+
+	}
+
+	// ========================================================================================
+	
+	
+
+	/* --------------------------------- GET --------------------------------- */	
+
+	@Override
+	public Role addNewRoleToCompany(Role role, String companyId) throws Exception {
+		
+		return companyRepository.addNewRoleToCompany(role, companyId);
+
+	}
+
+	// ========================================================================================
 
 }

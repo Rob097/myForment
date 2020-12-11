@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class Company {
 	
 	@Id
-	private String idCom;
+	private String id;
 	
 	@NotBlank
 	private String ownerId;

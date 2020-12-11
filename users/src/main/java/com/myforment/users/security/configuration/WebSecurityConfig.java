@@ -37,9 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] ADMIN_MATCHER = { "/api/clienti/inserisci/**", "/api/clienti/elimina/**", "/api/auth/getAll" };
 	private static final String[] EDITOR_MATCHER = {};
 	
-	@Autowired
-	UserDetailsServiceImpl userDetailsService;
-
+	
+	
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 
@@ -47,10 +46,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthTokenFilter authenticationJwtTokenFilter() {
 		return new AuthTokenFilter();
 	}
+	
+	@Bean
+	public UserDetailsServiceImpl getUserDetailsServiceImpl() {
+		return new UserDetailsServiceImpl();
+	}
+
+
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		authenticationManagerBuilder.userDetailsService(getUserDetailsServiceImpl()).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -100,4 +106,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// disable page caching
 		http.headers().cacheControl();
 	}
+
 }

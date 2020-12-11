@@ -41,7 +41,7 @@ public class MultitenantMongoDbFactory extends SimpleMongoClientDatabaseFactory 
 
 		//temporaryDatabaseName is used only if userr template needs to access to an user different to the current logged
 		if (this.temporaryDatabaseName != null && !this.temporaryDatabaseName.isEmpty()) {
-			database = doGetMongoDatabase(this.databaseName);
+			database = doGetMongoDatabase(this.temporaryDatabaseName);
 			this.temporaryDatabaseName = null;
 			
 		//Else it uses databaseName

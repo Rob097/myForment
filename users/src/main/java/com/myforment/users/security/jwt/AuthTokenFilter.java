@@ -22,8 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.users.security.configuration.Properties;
+import com.myforment.users.services.UserService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -42,8 +42,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	private Properties properties;
 	
 	@Autowired
-	@Qualifier("utentiTemplate")
-	private MongoTemplateCustom utentiTemplate;
+	@Qualifier("currentUsersService")
+	private UserService userService;
 	
 	private final String idAuthorities = Properties.Id_AUTHORITIES;
 	
@@ -75,7 +75,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 				if(userId != null) {
 
 					//Important! Setting default user database.
-					utentiTemplate.setDefaultUserDb(userId);
+					userService.setDefaultUserDb(userId);
 
 				}
 				

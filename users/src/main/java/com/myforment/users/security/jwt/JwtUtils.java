@@ -98,7 +98,7 @@ public class JwtUtils implements Serializable {
 	}
 
 	Claims getAllClaimsFromToken(String token) {
-		try {
+		try {			
 			Claims claims = Jwts.parser().setSigningKey(properties.getJwtSecret()).parseClaimsJws(token).getBody();
 			return claims;
 		} catch (SignatureException e) {
@@ -124,7 +124,7 @@ public class JwtUtils implements Serializable {
 
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
 		try {
-			final Claims claims = getAllClaimsFromToken(token);
+			final Claims claims = this.getAllClaimsFromToken(token);
 			return claimsResolver.apply(claims);
 		} catch (Exception e) {
 			throw e;
@@ -149,7 +149,6 @@ public class JwtUtils implements Serializable {
 		if (rememberMe) {
 			return new Date(createdDate.getTime() + properties.getJwtExpirationMsRememberMe());
 		}else {
-			System.out.println("check: " + rememberMe);
 			return new Date(createdDate.getTime() + properties.getJwtExpirationMs());
 		}
 		

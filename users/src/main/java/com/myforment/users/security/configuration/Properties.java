@@ -1,5 +1,8 @@
 package com.myforment.users.security.configuration;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,6 +35,14 @@ public class Properties {
 	private final String databaseCompanies;
 	
 	private final String connectionUri;
+	
+	private final String encryptPassword;
+	
+	private final String encryptAlgorithm;
+	
+	private final String encryptSalt;
+	
+	private final String encryptIv;
     
     
     
@@ -47,7 +58,11 @@ public class Properties {
     		@Value("${connection.general.database}") String databaseGeneral,
     		@Value("${connection.users.database}") String databaseUsers,
     		@Value("${connection.company.database}") String databaseCompanies,
-    		@Value("${connection.uri}") String connectionUri    		
+    		@Value("${connection.uri}") String connectionUri,
+    		@Value("${secret.password}") String encryptPassword,
+    		@Value("${secret.algorithm}") String encryptAlgorithm,
+    		@Value("${secret.salt}") String encryptSalt,
+    		@Value("${secret.iv}") String encryptIv 
     		) {
     	this.jwtExpirationMs = jwtExpirationMs;
     	this.jwtExpirationMsRememberMe = jwtExpirationMsRememberMe;
@@ -61,7 +76,10 @@ public class Properties {
     	this.databaseUsers = databaseUsers;
     	this.databaseCompanies = databaseCompanies;
     	this.connectionUri = connectionUri;
-    	
+    	this.encryptPassword = encryptPassword;
+    	this.encryptAlgorithm = encryptAlgorithm;
+		this.encryptSalt = encryptSalt;
+		this.encryptIv = encryptIv;
     }
 	
 	
@@ -85,4 +103,6 @@ public class Properties {
 	public static String ROLE_BASIC = "BASIC";
 	public static String ROLE_ADMIN = "ADMIN";
 	public static String ROLE_EDITOR = "EDITOR";
+	
+	public static List<String> ENCRYPT_EXCEPTIONS = Arrays.asList("_class", "_id", "password", "username", "roles", "rolesId", "roleName", "permissionsId");
 }

@@ -56,7 +56,7 @@ public class MongoTemplateCustom extends MongoTemplate {
 			|| this.databaseName == null || this.databaseName.isEmpty()
 			|| entityId == null || entityId.isEmpty()
 			|| this.databaseName.equals(this.properties.getDatabaseGeneral())) {
-			
+			System.out.println("Primo if: " + entityId);
 			this.getMultitenantMongoDbFactory().setDatabaseName(this.databaseName);
 			
 		}

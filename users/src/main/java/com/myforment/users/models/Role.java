@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.myforment.users.models.enums.ERole;
 
 import lombok.AllArgsConstructor;

@@ -98,5 +98,50 @@
     "name": "connection.company.uri",
     "type": "java.lang.String",
     "description": "A description for 'connection.company.uri'"
+  },
+  {
+    "name": "mongodb.encrypt.keys.version",
+    "type": "java.lang.String",
+    "description": "A description for 'mongodb.encrypt.keys.version'"
+  },
+  {
+    "name": "mongodb.encrypt.keys.key",
+    "type": "java.lang.String",
+    "description": "A description for 'mongodb.encrypt.keys.key'"
+  },
+  {
+    "name": "encryptedv2.property",
+    "type": "java.lang.String",
+    "description": "A description for 'encryptedv2.property'"
+  },
+  {
+    "name": "secret.property",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.property'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "secret.algorithm",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.algorithm'"
+  },
+  {
+    "name": "secret.salt",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.salt'"
+  },
+  {
+    "name": "secret.iv",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.iv'"
+  },
+  {
+    "name": "secret.password",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.password'"
   }
 ]}

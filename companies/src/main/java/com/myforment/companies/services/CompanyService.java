@@ -6,26 +6,74 @@ import com.myforment.companies.models.Company;
 import com.myforment.companies.models.Employee;
 import com.myforment.companies.models.Permission;
 import com.myforment.companies.models.Role;
+import com.myforment.companies.models.enums.ERole;
+import com.myforment.users.models.User;
 import com.myforment.users.models.Utente;
 
 public interface CompanyService {
+	
+	/* ###########  COMPANIES  ########### */
+	
+	/* GET */
 
-	public ArrayList<Company> GetAll();
+	public ArrayList<Company> getAllCompanies() throws Exception;	
 	
-	public ArrayList<Permission> getAllPermissions();
+	public Company getCompanyById(String id) throws Exception;
 	
-	public Company GetById(String id);
+	public boolean existCompanyByName(String name) throws Exception;
 	
-	public Company GeneralSave(Company company);
+	public boolean existCompanyByLegalName(String legalName) throws Exception;
 	
-	public Employee addEmployee(Utente employee, Company company);
+	/* ADD */
 	
-	public Role addRole(Role role, Company company);
+	public Company saveCompany(Company company) throws Exception;
 	
-	public Role getRoleById(String id, String companyId);
+	/* REMOVE */
 	
-	public boolean existByName(String name);
+	public void removecompany(String companyId) throws Exception;
 	
-	public boolean existByLegalName(String name);
+	
+	
+	
+	
+	
+	/* ###########  EMPLOYEES  ########### */
+	
+	/* GET */
+	
+	public ArrayList<Employee> getAllEmployees(String companyId) throws Exception;
+	
+	public ArrayList<String> getAllEmployeesId(String companyId) throws Exception;
+	
+	public ArrayList<User> loadAllUsersExceptEmployees(String companyId) throws Exception;
+	
+	/* ADD */
+	
+	public Employee addEmployee(Utente employee, String companyId, ERole role) throws Exception;
+	
+	/* REMOVE */
+	
+	public void removeEmployeeByUserId(String employeeId, String companyId) throws Exception;
+	
+	
+	
+	
+	
+	
+	/* ROLES */
+	
+	/* GET */
+	
+	public ArrayList<Permission> getAllPermissions() throws Exception;
+	
+	public Role getRoleById(String roleId, String companyId) throws Exception;
+
+	public Role getRoleByName(ERole name, String companyId) throws Exception;
+	
+	/* ADD */
+	
+	public Role addNewRoleToCompany(Role role, String companyId) throws Exception;
+
+	
 	
 }

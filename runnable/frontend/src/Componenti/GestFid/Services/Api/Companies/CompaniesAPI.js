@@ -22,8 +22,26 @@ class CompaniesService {
     }
 
     insCompany = (company) => {
-        console.log("%O", company);
         return axios.post(`${this.state.Server}${this.state.BaseURL}/insert`, company);
+    }
+
+    searchUsersToInvite = (companyId) => {
+        console.log("ID: " + companyId);
+        return axios.get(`${this.state.Server}${this.state.BaseURL}/searchUserToInvite/${companyId}`);
+    }
+
+    searchCompanysEmployees = (companyId) => {
+        return axios.get(`${this.state.Server}${this.state.BaseURL}/searchCompanysEmployees/${companyId}`);
+    }
+
+    inviteUsers = (parameters) => {
+        console.log("parameters" + " %O", parameters);
+        return axios.post(`${this.state.Server}${this.state.BaseURL}/invite`, parameters);
+    }
+
+    removeUser = (parameters) => {
+        console.log("parameters" + " %O", parameters);
+        return axios.post(`${this.state.Server}${this.state.BaseURL}/removeUser`, parameters);
     }
 
 }

@@ -18,14 +18,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Role {
-	
-  @Id
-  private String id;
 
-  @NotBlank
-  private ERole name;
-  
-  @NotBlank
-  private List<String> permissionsId;
+	@Id
+	private String id;
+
+	@NotBlank
+	private ERole roleName;
+
+	@NotBlank
+	private List<String> permissionsId;
+
+	public Role(@NotBlank ERole roleName, @NotBlank List<String> permissionsId) {
+		super();
+		this.roleName = roleName;
+		this.permissionsId = permissionsId;
+	}
 
 }

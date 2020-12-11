@@ -61,7 +61,7 @@ export default class Companies extends Component {
             .then(() => {
                 this.setState({ OkMsg: `Eliminazione azienda ${id} eseguita con successo!` })
                 this.ResetValue();
-                this.CercaTutti();
+                this.CercaTutte();
             })
             .catch(error => HandleError.handleError(this, error))
     }
@@ -134,7 +134,7 @@ export default class Companies extends Component {
         //Aggiungo a c tutti i clienti
         this.state.companies.map((company, index) => {
             console.log("%O", company);
-            c[index] = { id: company.idCom, name: company.name, sector: company.sector, address: company.address.addressLineOne + ", " + company.address.city + ", " + company.address.cap + ", " + company.address.province, edit: buttonEdit(company.idCom), delete: buttonDelete(company.idCom) }
+            c[index] = { id: company.id, name: company.name, sector: company.sector, address: company.address.addressLineOne + ", " + company.address.city + ", " + company.address.cap + ", " + company.address.province, edit: buttonEdit(company.id), delete: buttonDelete(company.id) }
         })
 
         //Dati della DataTable. Colonne statiche e Righe dinamiche

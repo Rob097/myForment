@@ -2,24 +2,31 @@ import React, { Component } from "react";
 import { Formik, FormikProps, Form, Field, ErrorMessage } from 'formik';
 import CompaniesService from '../../Services/Api/Companies/CompaniesAPI.js';
 import HandleError from "../../Errors/HandleError.js"
+import Select from 'react-select'
+import { SelectField } from "./SelectField";
+import { MDBDataTable, MDBCard, MDBCardHeader, MDBCardBody, MDBBtn } from 'mdbreact';
 
 export default class CompanyDataComponent extends Component {
     state = {
-        idCom: '',
+        id: '',
         name: '',
         logo: 'logo',
         ownerId: '',
-            addressLineOne: '',
-            addressLineTwo: '',
-            city: '',
-            cap: '',
-            province: '',
-            country: '',
+        addressLineOne: '',
+        addressLineTwo: '',
+        city: '',
+        cap: '',
+        province: '',
+        country: '',
         legalName: '',
         email: '',
         sector: '',
+        Msg: null,
         okMsg: null,
-        ErrMsg: null
+        ErrMsg: null,
+        employees: [],
+        users: [],
+        utenti: []
     }
 
     componentDidMount() {
@@ -31,7 +38,41 @@ export default class CompanyDataComponent extends Component {
             CompaniesService.getCompanyById(id)
                 .then(response => this.handleResponse(response))
                 .catch(error => HandleError.handleError(this, error))
+
+            CompaniesService.searchUsersToInvite(id)
+                .then(response => {
+                    response.data.forEach(user => {
+                        this.setState({
+                            users: this.state.users.concat(
+                                {
+                                    label: user.username,
+                                    value: user.id
+                                }
+                            )
+                        })
+                    });
+                    console.log("USERS: %O", this.state.users);
+                })
+                .catch(error => HandleError.handleError(this, error))
+            
+            this.searchEmployees(id);
+
         }
+    }
+
+
+    searchEmployees(id){
+        this.setState({
+            employees: []
+        });
+        CompaniesService.searchCompanysEmployees(id)
+            .then(response => {
+                console.log("employees: %O", response)
+                this.setState({
+                    employees: this.state.employees.concat(response.data)
+                })
+            })
+            .catch(error => HandleError.handleError(this, error))
     }
 
     //Gestisco le risposte positive.
@@ -39,30 +80,58 @@ export default class CompanyDataComponent extends Component {
     handleResponse(response) {
 
         this.setState({
-            idCom: response.data.idCom,
+            id: response.data.id,
             name: response.data.name,
             ownerId: response.data.ownerId,
             addressLineOne: response.data.address.addressLineOne,
-                addressLineTwo: response.data.address.addressLineTwo,
-                city: response.data.address.city,
-                cap: response.data.address.cap,
-                province: response.data.address.province,
-                country: response.data.address.country,
+            addressLineTwo: response.data.address.addressLineTwo,
+            city: response.data.address.city,
+            cap: response.data.address.cap,
+            province: response.data.address.province,
+            country: response.data.address.country,
             legalName: response.data.legalName,
             email: response.data.email,
             sector: response.data.sector,
             okMsg: null,
         })
-        console.log("%O", this.state);
     }
+
+    handleSubmit = (values, { resetForm, setSubmitting }) => {
+        console.log("handleSubmit values", values);
+
+        CompaniesService.inviteUsers({
+            companyId: this.state.id,
+            utenti: values.utenti
+            //utenti: ["prova", "prova 2"]
+        })
+            .then(
+                () => {
+                    this.setState({
+                        okMsg: 'Invito eseguito correttamente',
+                        Msg: null
+                    });
+                }
+            )
+            .catch(error => {
+                this.setState({
+                    Msg: null
+                });
+                HandleError.handleError(this, error)
+            });
+
+        //resetForm();
+        //setSubmitting(false);
+    };
 
     //Metodo per salvare il nuovo o aggiornare uno esistente
     Salva = (values) => {
 
-        console.log("SALVA: %O", values)
+        this.setState({
+            Msg: "Creazione azienda in corso..."
+        })
 
         CompaniesService.insCompany({
-            idCom: values.idCom,
+            id: values.id,
             name: values.name,
             logo: "logo",
             ownerId: values.ownerId,
@@ -80,10 +149,18 @@ export default class CompanyDataComponent extends Component {
         })
             .then(
                 () => {
-                    this.setState({ okMsg: 'Inserimento dati eseguito con successo' });
+                    this.setState({
+                        okMsg: 'Inserimento dati eseguito con successo',
+                        Msg: null
+                    });
                 }
             )
-            .catch(error => HandleError.handleError(this, error));
+            .catch(error => {
+                this.setState({
+                    Msg: null
+                });
+                HandleError.handleError(this, error)
+            });
     }
 
     //Metodo per annullare le modifiche e ritornare a tutti i clienti
@@ -127,12 +204,30 @@ export default class CompanyDataComponent extends Component {
         return errors;
     }
 
+    //MEtodo per eliminare un cliente in base al suo ID
+    Remove = (id) => {
+
+        CompaniesService.removeUser({
+            userId: id,
+            companyId: this.state.id
+        })
+            .then(() => {
+                this.setState({ OkMsg: `Rimozione utente ${id} eseguita con successo!` })
+                //this.ResetValue();
+                //this.CercaTutte();
+            })
+            .catch(error => HandleError.handleError(this, error))
+
+
+        this.searchEmployees(this.state.id);
+    }
+
 
 
     render() {
 
         //Imposto il valore dei campi della form con quelli salvati nello state. ATTENZIONE, questi nomi devo essere uguali a quelli dello state.
-        let { idCom, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector } = this.state;
+        let { id, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector, utenti } = this.state;
 
         return (
             <section className="container">
@@ -144,7 +239,7 @@ export default class CompanyDataComponent extends Component {
                         <Formik
                             //Inizio della FORM. Per crearla utilizzo FORMIK
                             //Imposto i valori iniziali. ATTENZIONE, questi nomi devono essere uguali a quelli dell'id dei campi della form
-                            initialValues={{ idCom, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector }}
+                            initialValues={{ id, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector }}
 
                             //Nel submit della FORM chiamo il metodo salva
                             onSubmit={(values) => this.Salva(values)}
@@ -163,13 +258,14 @@ export default class CompanyDataComponent extends Component {
                             {
 
                                 (props) => (
-                                    
+
                                     <Form>
 
                                         <div className="form-group">
                                             <img name="logo" style={{ width: "100px", "marginBottom": "2rem" }} src={`../logo.png`} className="img-sm rounded-circle border" alt="imgcli" />
                                         </div>
 
+                                        {this.state.Msg && <div className="alert alert-info"><h5>{this.state.Msg}</h5></div>}
                                         {this.state.okMsg && <div className="alert alert-success"><h5>{this.state.okMsg}</h5></div>}
                                         {this.state.ErrMsg && <div className="alert alert-danger"><h5>{this.state.ErrMsg}</h5></div>}
 
@@ -247,7 +343,148 @@ export default class CompanyDataComponent extends Component {
                         </Formik>
                     </div>
                 </div>
+
+                <div className="card">
+                    <div className="card-body">
+                        <h3 className="card-title mb-4">Impiegati assunti</h3>
+                        <div>
+                            {this.DatatablePageUsers()}
+                        </div>
+                        <h3 className="card-title mb-4">Utenti da invitare</h3>
+
+                        <Formik
+                            initialValues={this.state.utenti}
+                            onSubmit={(values, props) => this.handleSubmit(values, props)}
+                            render={({
+                                utenti,
+                                //touched,
+                                setFieldValue,
+                                //setFieldTouched,
+                                //isSubmitting
+                            }) => (
+                                    <Form>
+                                        <SelectField
+                                            id="utenti"
+                                            name="utenti"
+                                            label="Invita utenti"
+                                            placeholder="Seleziona utenti"
+                                            options={this.state.users}
+                                            value={utenti}
+                                            isMulti={true}
+                                            onChange={setFieldValue}
+                                            //onBlur={setFieldTouched}
+                                            //touched={touched.fieldOfResearch}
+                                            isClearable={true}
+                                            backspaceRemovesValue={true}
+                                        />
+
+                                        <button type="submit" /*disabled={isSubmitting}*/>
+                                            <h3>Submit</h3>
+                                        </button>
+                                    </Form>
+                                )}
+                        />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+                </div>
             </section>
         )
     }
+
+    //Metodo per la generazione dinamica della DataTable. Uso mdbreact.
+    DatatablePageUsers = () => {
+
+        //Array di lavoro
+        var c = [];
+
+        //Bottoni di modifica e eliminazione di un cliente. Index è il id.
+        const buttonRemove = (id) => { return <button id={"remove-" + id} onClick={e => window.confirm(`Confermi l'eliminazione dell'utente ${id} dall'azienda?`) && this.Remove(id)} type="button" className="btn btn-danger rounded" size="sm">Rimuovi</button> }
+
+        //Aggiungo a c tutti i clienti
+        this.state.employees.map((utente, index) => {
+            console.log("%O", utente);
+            c[index] = { id: utente.id, name: utente.name, email: utente.email, remove: buttonRemove(utente.id) }
+        })
+
+        //Dati della DataTable. Colonne statiche e Righe dinamiche
+        const data = {
+            columns: [
+                {
+                    label: 'id',
+                    field: 'id',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Name',
+                    field: 'name',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'email',
+                    field: 'email',
+                    sort: 'asc',
+                    width: 270
+                },
+                {
+                    label: 'Rimuovi',
+                    field: 'remove',
+                    sort: 'asc',
+                    width: 270
+                }
+            ],
+            rows: c
+        };
+
+        //Renderizzo la DataTable
+        return (
+            <MDBCard style={{ width: "90%", margin: "2rem auto", "maxWidth": "90vw" }}>
+                <MDBCardHeader tag="h3" className="text-center font-weight-bold text-uppercase py-4">
+                    Impiegati assunti
+            </MDBCardHeader>
+                <MDBCardBody>
+
+                    {/* Sezione Avvisi */}
+                    {/*Significa che se OkMsg non è null appare l'alert altrimenti nulla.*/}
+                    {this.state.OkMsg && <div className="alert alert-success">{this.state.OkMsg}</div>}
+                    <ErrWebApiMsg ErrWebApi={this.state.ErrWebApi} ErrMsg={this.state.ErrMsg} obj={this} />
+
+                    {/* Tabella */}
+                    <MDBDataTable btn striped bordered hover entriesOptions={[5, 20, 25]} entries={5} data={data} />
+                </MDBCardBody>
+            </MDBCard>
+        );
+    }
+
+}
+
+function ErrWebApiMsg(props) {
+    if (props.ErrWebApi) {
+        return (
+            <div>
+                <div className="alert alert-danger" role="alert"><h3>{props.ErrMsg}</h3></div>
+            </div>
+        )
+    }
+
+    return null;
 }

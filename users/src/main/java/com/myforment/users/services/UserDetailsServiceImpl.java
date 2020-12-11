@@ -1,41 +1,18 @@
 package com.myforment.users.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.myforment.users.models.Contract;
 import com.myforment.users.models.User;
-import com.myforment.users.models.Utente;
-import com.myforment.users.multitenant.MongoTemplateCustom;
 import com.myforment.users.repository.UserRepository;
 
-/**
- * @author Roberto97
- * The UserDetailsService is a core interface in Spring Security framework, which is used to retrieve the user’s authentication and authorization information. 
- */
-@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
 	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	@Qualifier("mongoTemplate")
-	private MongoTemplate mongoTemplate;
-	
-	@Autowired
-	@Qualifier("utentiTemplate")
-	private MongoTemplateCustom utentiTemplate;	
-	
-	//============================================================================================================================
+	UserRepository userRepository;	
 	
 	@Override
 	@Transactional
@@ -45,66 +22,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 		return UserDetailsImpl.build(user);
 	}
-	
-	//============================================================================================================================
-	
-	public User loadUserModelByUsername(String username) throws UsernameNotFoundException {
-		
-		return userRepository.findByUsername(username).orElse(null);		
-		
-	}
-	
-	//============================================================================================================================
-	
-	public Utente loadUtenteModelById(String id) throws UsernameNotFoundException {
-		
-		return utentiTemplate.findById(id, Utente.class);		
-		
-	}
-
-	//============================================================================================================================
-	
-	public ArrayList<User> loadAllUsers(){
-		return (ArrayList<User>) mongoTemplate.findAll(User.class);
-	}
-
-	//============================================================================================================================
-	
-	public Utente save(Utente u) {
-		try {
-			utentiTemplate.save(u);
-			return u;
-		}catch(Exception e) {
-			e.printStackTrace();			
-		}
-		return null;
-		
-	}
-
-	//============================================================================================================================
-	
-	public Contract addContract(Utente u, Contract c) {
-		try {
-			utentiTemplate.save(c);		
-			return c;
-		}catch(Exception e) {
-			e.printStackTrace();			
-		}
-		return null;
-	}
-	
-	//============================================================================================================================
-	
-	public ArrayList<Contract> getContracts(Utente u) {
-		try {
-			List<Contract> contratti = utentiTemplate.findAll(Contract.class);
-			return (ArrayList<Contract>) contratti;
-		}catch(Exception e) {
-			e.printStackTrace();			
-		}
-		return null;
-	}
-	
-	//============================================================================================================================
 	
 }

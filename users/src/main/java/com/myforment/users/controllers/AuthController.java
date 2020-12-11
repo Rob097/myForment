@@ -32,18 +32,15 @@ import com.myforment.users.models.Role;
 import com.myforment.users.models.User;
 import com.myforment.users.models.Utente;
 import com.myforment.users.models.enums.ERole;
-import com.myforment.users.multitenant.MongoTemplateCustom;
-import com.myforment.users.multitenant.MultitenantMongoDbConfiguration;
 import com.myforment.users.payload.request.LoginRequest;
 import com.myforment.users.payload.request.SignupRequest;
 import com.myforment.users.payload.response.JwtResponse;
 import com.myforment.users.payload.response.MessageResponse;
-import com.myforment.users.repository.RoleRepository;
-import com.myforment.users.repository.UserRepository;
 import com.myforment.users.security.configuration.Properties;
 import com.myforment.users.security.jwt.JwtUtils;
 import com.myforment.users.services.UserDetailsImpl;
-import com.myforment.users.services.UserDetailsServiceImpl;
+import com.myforment.users.services.UserService;
+import com.myforment.users.services.roles.RoleServices;
 
 /**
  * @author Roberto97 Class used to perform action on the paths that are relative
@@ -53,25 +50,12 @@ import com.myforment.users.services.UserDetailsServiceImpl;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	
-	@Autowired(required=false)
-	HttpServletRequest request;
-	
+
 	@Autowired
 	private Properties properties;
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	@Qualifier("utentiTemplate")
-	private MongoTemplateCustom utentiTemplate;
-
-	@Autowired
-	private RoleRepository roleRepository;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -80,18 +64,21 @@ public class AuthController {
 	private JwtUtils jwtUtils;
 
 	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
-
+	@Qualifier("currentUsersService")
+	UserService userService;
+	
 	@Autowired
-	public MultitenantMongoDbConfiguration multitenantMongoDbConfiguration;
+	@Qualifier("RoleServicesImpl")
+	RoleServices roleServices;
 
 	private final String TOKEN_COOKIE_NAME = Properties.TOKEN_COOKIE_NAME;
 	private final String REMEMBER_COOKIE_NAME = Properties.REMEMBER_COOKIE_NAME;
-	//private final String ENTITY_ID_ATTRIBUTE = Properties.ENTITY_ID_ATTRIBUTE;
 	private final String PATH_COOKIES = Properties.PATH_COOKIES;
-	
+
 	private Cookie token_cookie = null;
 	private Cookie remember_cookie = null;
+	
+	
 
 	/**
 	 * Used when a user try to login. It check if the params are ok and if they are,
@@ -113,10 +100,12 @@ public class AuthController {
 			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-			user = userDetailsService.loadUserModelByUsername(loginRequest.getUsername());
-			
-			/*Important! Setting default user database.
-			utentiTemplate.setDefaultUserDb(user.getId());*/
+			user = userService.getUserModelByUsername(loginRequest.getUsername());
+
+			/*
+			 * Important! Setting default user database.
+			 * utentiTemplate.setDefaultUserDb(user.getId());
+			 */
 
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
@@ -155,7 +144,8 @@ public class AuthController {
 	public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request,
 			HttpServletResponse response) {
 
-		String authToken = request.getHeader(properties.getTokenHeader());
+		//System.out.println("HEADERS: " + request.getHeader("authorization"));
+		String authToken = request.getHeader(properties.getTokenHeader().toString());
 		boolean rememberMe = false;
 
 		Cookie[] cookies = request.getCookies();
@@ -168,19 +158,21 @@ public class AuthController {
 			}
 		}
 
-		final String token = null;
-		if (authToken != null)
-			authToken.substring(7);
+		if (authToken != null) {
+			final String token = authToken.substring(7);
 
-		if (jwtUtils.canTokenBeRefreshed(token)) {
-			String refreshedToken = jwtUtils.refreshToken(token, rememberMe);
-			response.setHeader(properties.getTokenHeader(), refreshedToken);
+			if (jwtUtils.canTokenBeRefreshed(token)) {
+				String refreshedToken = jwtUtils.refreshToken(token, rememberMe);
 
-			response.setHeader("exp", jwtUtils.getExpirationDateFromToken(refreshedToken).toString());
-
-			if (setCookie(rememberMe, refreshedToken, response))
-				return ResponseEntity.ok(new JwtResponse(refreshedToken));
-
+				response.setHeader(properties.getTokenHeader(), refreshedToken);
+	
+				response.setHeader("exp", jwtUtils.getExpirationDateFromToken(refreshedToken).toString());
+	
+				if (setCookie(rememberMe, refreshedToken, response))
+					return ResponseEntity.ok(new JwtResponse(refreshedToken));
+	
+			}
+			
 		}
 
 		return ResponseEntity.badRequest().body(null);
@@ -199,11 +191,11 @@ public class AuthController {
 			HttpServletRequest request) {
 
 		try {
-			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+			if(userService.existsByUsername(signUpRequest.getUsername())) {
 				return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 			}
 
-			if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			if (userService.existsByEmail(signUpRequest.getEmail())) {
 				return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 			}
 
@@ -211,39 +203,45 @@ public class AuthController {
 			User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
 					encoder.encode(signUpRequest.getPassword()));
 
-			Set<String> strRoles = signUpRequest.getRoles();
+			Set<String> strRoles = signUpRequest.getRoles();			
 			Set<Role> roles = new HashSet<>();
 
 			if (strRoles == null) {
-				roles.add(roleRepository.findByName(ERole.ROLE_BASIC).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+				roles.add(roleServices.findByName((ERole.ROLE_BASIC))
+						.orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
 			} else {
 				strRoles.forEach(role -> {
 					switch (role) {
 					case "admin":
-						roles.add(roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						roles.add(roleServices.findByName(ERole.ROLE_ADMIN)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
 						break;
 					case "editor":
-						roles.add(roleRepository.findByName(ERole.ROLE_EDITOR).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						roles.add(roleServices.findByName(ERole.ROLE_EDITOR)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
 						break;
 					case "basic":
 					default:
-						roles.add(roleRepository.findByName(ERole.ROLE_BASIC).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
-						roles.add(roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						
+						roles.add(roleServices.findByName(ERole.ROLE_BASIC)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
+						roles.add(roleServices.findByName(ERole.ROLE_ADMIN)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found.")));
 						break;
 					}
 				});
 			}
-
+			
 			user.setRoles(roles);
 			// Save user into user collection in general DB for authentication
-			Utente u = new Utente(userRepository.save(user));
+			Utente u = new Utente(userService.saveUser(user));
 
 			// Save user into Utente collection in the personal database of the user
-			utentiTemplate.setDefaultUserDb(u.getId());
-			userDetailsService.save(u);
+			userService.setDefaultUserDb(u.getId());
+			userService.saveUtente(u);
 
 			return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(new MessageResponse("User registration failed!"));
@@ -272,6 +270,9 @@ public class AuthController {
 				token_cookie.setMaxAge((int) (properties.getJwtExpirationMsRememberMe() / 1000));
 				remember_cookie.setMaxAge((int) (properties.getJwtExpirationMsRememberMe() / 1000));
 			}
+			
+			response.addCookie(remember_cookie);
+			response.addCookie(token_cookie);
 
 			return true;
 		} catch (Exception e) {
@@ -284,7 +285,7 @@ public class AuthController {
 	@PostMapping(value = "/getAll", produces = "application/json")
 	public ResponseEntity<?> listAllUsr() {
 
-		ArrayList<User> utenti = userDetailsService.loadAllUsers();
+		ArrayList<User> utenti = userService.loadAllUsers();
 		if (utenti == null || utenti.isEmpty()) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Non è stato trovato alcun utente!"));
 		}
