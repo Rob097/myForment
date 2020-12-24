@@ -138,7 +138,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom{
 	@Override
 	public Role getRoleByName(String name) {
 		Query query = new Query().addCriteria(Criteria.where("name").is(name));
-		return (Role) mongoTemplate.find(query, Role.class);
+		return mongoTemplate.find(query, Role.class).get(0);
 	}
 
 }

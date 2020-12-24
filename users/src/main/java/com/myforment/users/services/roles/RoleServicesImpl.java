@@ -32,7 +32,10 @@ public class RoleServicesImpl implements RoleServices {
 	public Optional<Role> findByName(ERole name) {
 		try {
 			return Optional.ofNullable(userRepository.getRoleByName(name.toString()));
-		} catch (Exception e) {return null;}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

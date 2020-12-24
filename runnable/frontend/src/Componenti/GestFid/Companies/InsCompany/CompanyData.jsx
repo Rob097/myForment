@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Formik, FormikProps, Form, Field, ErrorMessage } from 'formik';
+import { Formik, FormikProps, Form, Field, useField, ErrorMessage } from 'formik';
 import CompaniesService from '../../Services/Api/Companies/CompaniesAPI.js';
 import HandleError from "../../Errors/HandleError.js"
 import Select from 'react-select'
@@ -25,8 +25,11 @@ export default class CompanyDataComponent extends Component {
         okMsg: null,
         ErrMsg: null,
         employees: [],
+        employeesObj: [],
         users: [],
-        utenti: []
+        utenti: [],
+        teams: [],
+        teamsObj: []
     }
 
     componentDidMount() {
@@ -54,14 +57,15 @@ export default class CompanyDataComponent extends Component {
                     console.log("USERS: %O", this.state.users);
                 })
                 .catch(error => HandleError.handleError(this, error))
-            
+
             this.searchEmployees(id);
+            this.searchTeams(id);
 
         }
     }
 
 
-    searchEmployees(id){
+    searchEmployees(id) {
         this.setState({
             employees: []
         });
@@ -71,6 +75,40 @@ export default class CompanyDataComponent extends Component {
                 this.setState({
                     employees: this.state.employees.concat(response.data)
                 })
+                response.data.forEach(employee => {
+                    this.setState({
+                        employeesObj: this.state.employeesObj.concat(
+                            {
+                                label: employee.username,
+                                value: employee.id
+                            }
+                        )
+                    })
+                });
+            })
+            .catch(error => HandleError.handleError(this, error))
+    }
+
+    searchTeams(id) {
+        this.setState({
+            teams: []
+        });
+        CompaniesService.getAllTeams(id)
+            .then(response => {
+                console.log("teams: %O", response)
+                this.setState({
+                    teams: this.state.teams.concat(response.data)
+                })
+                response.data.forEach(team => {
+                    this.setState({
+                        teamsObj: this.state.teamsObj.concat(
+                            {
+                                label: team.name,
+                                value: team.id
+                            }
+                        )
+                    })
+                });
             })
             .catch(error => HandleError.handleError(this, error))
     }
@@ -94,6 +132,39 @@ export default class CompanyDataComponent extends Component {
             sector: response.data.sector,
             okMsg: null,
         })
+    }
+
+    AddTeam = (values) => {
+        
+        let vals = [];
+        for (let i = 0; i < values.members.length; i++) {
+            vals[i] = values.members[i].value;
+        }
+
+        CompaniesService.addTeam(
+            this.state.id,
+            {
+                name: values.name,
+                description: values.description,
+                teamLeadersId: vals,
+                teamMembersId: vals
+            }
+        )
+            .then(
+                () => {
+                    this.setState({
+                        okMsg: 'Team aggiunto correttamente',
+                        Msg: null
+                    });
+                    this.searchTeams(this.state.id);
+                }
+            )
+            .catch(error => {
+                this.setState({
+                    Msg: null
+                });
+                HandleError.handleError(this, error)
+            });
     }
 
     handleSubmit = (values, { resetForm, setSubmitting }) => {
@@ -222,12 +293,28 @@ export default class CompanyDataComponent extends Component {
         this.searchEmployees(this.state.id);
     }
 
+    //MEtodo per eliminare un cliente in base al suo ID
+    RemoveTeam = (id) => {
+
+        CompaniesService.removeTeam(
+            id,
+            this.state.id
+            )
+            .then(() => {
+                this.setState({ OkMsg: `Rimozione team ${id} eseguita con successo!` })
+                this.searchTeams(this.state.id);
+                //this.ResetValue();
+                //this.CercaTutte();
+            })
+            .catch(error => HandleError.handleError(this, error))       
+    }
+
 
 
     render() {
 
         //Imposto il valore dei campi della form con quelli salvati nello state. ATTENZIONE, questi nomi devo essere uguali a quelli dello state.
-        let { id, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector, utenti } = this.state;
+        let { id, name, logo, addressLineOne, addressLineTwo, city, province, country, cap, legalName, email, sector, utenti, teams } = this.state;
 
         return (
             <section className="container">
@@ -353,7 +440,7 @@ export default class CompanyDataComponent extends Component {
                         <h3 className="card-title mb-4">Utenti da invitare</h3>
 
                         <Formik
-                            initialValues={this.state.utenti}
+                            initialValues={utenti}
                             onSubmit={(values, props) => this.handleSubmit(values, props)}
                             render={({
                                 utenti,
@@ -384,24 +471,76 @@ export default class CompanyDataComponent extends Component {
                                     </Form>
                                 )}
                         />
+                    </div>
+                </div>
 
+                <div className="card">
+                    <div className="card-body">
+                        <h3 className="card-title mb-4">Team Aziendali</h3>
 
+                        <div>
+                            {this.DatatablePageTeams()}
+                        </div>
 
+                        <h3 className="card-title mb-4">Crea un nuovo team</h3>
 
+                        <Formik
+                            //Inizio della FORM. Per crearla utilizzo FORMIK
+                            //Imposto i valori iniziali. ATTENZIONE, questi nomi devono essere uguali a quelli dell'id dei campi della form
+                            initialValues={{ teams }}
 
+                            //Nel submit della FORM chiamo il metodo salva
+                            onSubmit={(values) => this.AddTeam(values)}
+                            render={({
+                                utenti,
+                                //touched,
+                                setFieldValue,
+                                //setFieldTouched,
+                                //isSubmitting
+                            }) => (
 
+                                    <Form>
+                                        <div className="form-row">
+                                            <div className="col form-group">
+                                                <label>Nome</label>
+                                                <Field type="text" name="name" className="form-control" />
+                                            </div>
+                                        </div>
+                                        <div className="form-row">
+                                            <div className="col form-group">
+                                                <MyTextArea
+                                                    label="Descrizione"
+                                                    name="description"
+                                                    rows="6"
+                                                    value="Once upon a time there was a princess who lived at the top of a glass hill."
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-row">
+                                            <div className="col form-group">
+                                                <SelectField
+                                                    id="members"
+                                                    name="members"
+                                                    label="Utenti del team"
+                                                    placeholder="Seleziona utenti"
+                                                    options={this.state.employeesObj}
+                                                    value={utenti}
+                                                    isMulti={true}
+                                                    onChange={setFieldValue}
+                                                    //onBlur={setFieldTouched}
+                                                    //touched={touched.fieldOfResearch}
+                                                    isClearable={true}
+                                                    backspaceRemovesValue={true}
+                                                />
+                                            </div>
+                                        </div>
+                                        <button type="submit">
+                                            <h3>Aggiungi</h3>
+                                        </button>
+                                    </Form>
 
-
-
-
-
-
-
-
-
-
-
-
+                                )}
+                                />
 
                     </div>
                 </div>
@@ -475,7 +614,89 @@ export default class CompanyDataComponent extends Component {
         );
     }
 
+
+    //Metodo per la generazione dinamica della DataTable. Uso mdbreact.
+    DatatablePageTeams = () => {
+
+        //Array di lavoro
+        var c = [];
+
+        //Bottoni di modifica e eliminazione di un cliente. Index è il id.
+        const buttonRemove = (id) => { return <button id={"remove-" + id} onClick={e => window.confirm(`Confermi l'eliminazione del team ${id} dall'azienda?`) && this.RemoveTeam(id)} type="button" className="btn btn-danger rounded" size="sm">Rimuovi</button> }
+
+        //Aggiungo a c tutti i clienti
+        this.state.teams.map((team, index) => {
+            console.log("TEAM: %O", team);
+            c[index] = { id: team.id, name: team.name, description: team.description, remove: buttonRemove(team.id) }
+        })
+
+        //Dati della DataTable. Colonne statiche e Righe dinamiche
+        const data = {
+            columns: [
+                {
+                    label: 'id',
+                    field: 'id',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'Name',
+                    field: 'name',
+                    sort: 'asc',
+                    width: 150
+                },
+                {
+                    label: 'description',
+                    field: 'description',
+                    sort: 'asc',
+                    width: 270
+                },
+                {
+                    label: 'Rimuovi',
+                    field: 'remove',
+                    sort: 'asc',
+                    width: 270
+                }
+            ],
+            rows: c
+        };
+
+        //Renderizzo la DataTable
+        return (
+            <MDBCard style={{ width: "90%", margin: "2rem auto", "maxWidth": "90vw" }}>
+                <MDBCardHeader tag="h3" className="text-center font-weight-bold text-uppercase py-4">
+                    Team Aziendali
+            </MDBCardHeader>
+                <MDBCardBody>
+
+                    {/* Sezione Avvisi */}
+                    {/*Significa che se OkMsg non è null appare l'alert altrimenti nulla.*/}
+                    {this.state.OkMsg && <div className="alert alert-success">{this.state.OkMsg}</div>}
+                    <ErrWebApiMsg ErrWebApi={this.state.ErrWebApi} ErrMsg={this.state.ErrMsg} obj={this} />
+
+                    {/* Tabella */}
+                    <MDBDataTable btn striped bordered hover entriesOptions={[5, 20, 25]} entries={5} data={data} />
+                </MDBCardBody>
+            </MDBCard>
+        );
+    }
+
 }
+
+const MyTextArea = ({ label, ...props }) => {
+    // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+    // which we can spread on <input> and alse replace ErrorMessage entirely.
+    const [field, meta] = useField(props);
+    return (
+        <>
+            <label htmlFor={props.id || props.name}>{label}</label>
+            <textarea className="text-area" {...field} {...props} />
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </>
+    );
+};
 
 function ErrWebApiMsg(props) {
     if (props.ErrWebApi) {

@@ -92,6 +92,7 @@ public class AuthController {
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
 			HttpServletResponse response) {
+
 		Authentication authentication;
 		User user = null;
 
