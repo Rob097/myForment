@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry combineaccessrules="false" kind="src" path="/runnable"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/users"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/companies"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

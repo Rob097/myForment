@@ -1,0 +1,147 @@
+{"properties": [
+  {
+    "name": "jwtConstant",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtConstant'"
+  },
+  {
+    "name": "jwtConstant",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtConstant'"
+  },
+  {
+    "name": "jwtHeader",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtHeader'"
+  },
+  {
+    "name": "jwtExpirationMsRememberMe",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtExpirationMsRememberMe'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "connection.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.uri'"
+  },
+  {
+    "name": "connection.password",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.password'"
+  },
+  {
+    "name": "connection.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.database'"
+  },
+  {
+    "name": "connection.username",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.username'"
+  },
+  {
+    "name": "connection.host",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.host'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "connection.attributes",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.attributes'"
+  },
+  {
+    "name": "connection.general.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.general.database'"
+  },
+  {
+    "name": "connection.general.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.general.uri'"
+  },
+  {
+    "name": "connection.users.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.users.database'"
+  },
+  {
+    "name": "connection.users.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.users.uri'"
+  },
+  {
+    "name": "connection.port",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.port'"
+  },
+  {
+    "name": "connection.port",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.port'"
+  },
+  {
+    "name": "connection.company.database",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.company.database'"
+  },
+  {
+    "name": "connection.company.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'connection.company.uri'"
+  },
+  {
+    "name": "mongodb.encrypt.keys.version",
+    "type": "java.lang.String",
+    "description": "A description for 'mongodb.encrypt.keys.version'"
+  },
+  {
+    "name": "mongodb.encrypt.keys.key",
+    "type": "java.lang.String",
+    "description": "A description for 'mongodb.encrypt.keys.key'"
+  },
+  {
+    "name": "encryptedv2.property",
+    "type": "java.lang.String",
+    "description": "A description for 'encryptedv2.property'"
+  },
+  {
+    "name": "secret.property",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.property'"
+  },
+  {
+    "name": "jwtSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwtSecret'"
+  },
+  {
+    "name": "secret.algorithm",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.algorithm'"
+  },
+  {
+    "name": "secret.salt",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.salt'"
+  },
+  {
+    "name": "secret.iv",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.iv'"
+  },
+  {
+    "name": "secret.password",
+    "type": "java.lang.String",
+    "description": "A description for 'secret.password'"
+  }
+]}

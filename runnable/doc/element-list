@@ -1,0 +1,13 @@
+com.multitenant.jwt.clients.controllers
+com.multitenant.jwt.clients.models
+com.multitenant.jwt.clients.repository
+com.multitenant.jwt.clients.services
+com.multitenant.jwt.runnable.main
+com.multitenant.jwt.users.controllers
+com.multitenant.jwt.users.models
+com.multitenant.jwt.users.payload.request
+com.multitenant.jwt.users.payload.response
+com.multitenant.jwt.users.repository
+com.multitenant.jwt.users.security.configuration
+com.multitenant.jwt.users.security.jwt
+com.multitenant.jwt.users.services

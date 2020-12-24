@@ -1,0 +1,17 @@
+.card{
+    margin: 6% auto;
+    padding-top: 5px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+}
+
+.inscli {
+    margin: 10px 15px auto 15px;
+    width: 30%;
+}
+
+.errmsg{
+    font-size: medium;
+    color: red;
+}
