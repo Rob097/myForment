@@ -143,5 +143,10 @@
     "name": "secret.password",
     "type": "java.lang.String",
     "description": "A description for 'secret.password'"
+  },
+  {
+    "name": "spring.data.mongodb.min-connections-per-host",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.data.mongodb.min-connections-per-host'"
   }
 ]}

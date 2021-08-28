@@ -7,7 +7,12 @@ com\myforment\companies\models\Permission.class
 com\myforment\companies\models\enums\ERole.class
 com\myforment\companies\models\Course.class
 com\myforment\companies\controllers\CompaniesController.class
+com\myforment\companies\services\TeamServiceImpl.class
 com\myforment\companies\models\enums\EPermission.class
+com\myforment\companies\controllers\TeamsController.class
+com\myforment\companies\repository\TeamRepositoryCustom.class
+com\myforment\companies\services\TeamService.class
 com\myforment\companies\models\Employee.class
 com\myforment\companies\repository\CompanyRepositoryCustomImpl.class
+com\myforment\companies\repository\TeamRepositoryCustomImpl.class
 com\myforment\companies\repository\CompanyRepositoryCustom.class
